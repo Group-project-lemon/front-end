@@ -14,7 +14,7 @@ const App = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const result = await axios.get('/');
+        const result = await axios.get('http://localhost:4000');
         setItemInfo(result.data);
       } catch (error) {
         console.error('데이터를 가져오는 중 오류가 발생했습니다.');
