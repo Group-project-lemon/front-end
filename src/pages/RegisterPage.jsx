@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
+import { apiClient } from '../utils/apiClient';
 
 export default function LoginForm() {
   const [formData, setFormData] = useState({
@@ -8,12 +9,24 @@ export default function LoginForm() {
     password: '',
   });
 
-  const history = useNavigate();
+  const registerUser = async () => {
+    const response = await apiClient({
+      url: '/auth/sign-up',
+      method: 'POST',
+      data: {
+        id: formData.email,
+        password: formData.password,
+      },
+    });
+    // token을 (httpOnly)쿠키나 세션에 저장
+  }
+
+  const navigate = useNavigate();
 
   const handleRegister = async () => {
     try {
       await registerUser(formData);
-      history.push('/');
+      navigate("/");
     } catch (err) {
       console.log('Registration failed: ', err);
     }
@@ -52,7 +65,7 @@ export default function LoginForm() {
             placeholder="Enter your password"
           />
         </fieldset>
-        <button type="submit" onClick={handleRegister}>
+        <button type="button" onClick={handleRegister}>
           Register
         </button>
       </form>
