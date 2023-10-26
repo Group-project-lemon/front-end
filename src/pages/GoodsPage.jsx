@@ -2,7 +2,7 @@ import MainBar from '../components/MainBar';
 import ItemContent from '../components/ItemContent';
 import Footer from '../components/Footer';
 
-const ItemsPage = () => {
+const GoodsPage = () => {
   return (
     <div>
       <MainBar />
@@ -12,4 +12,4 @@ const ItemsPage = () => {
   );
 };
 
-export default ItemsPage;
+export default GoodsPage;

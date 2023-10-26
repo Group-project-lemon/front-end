@@ -46,17 +46,17 @@ function ProductList() {
                 </li>
               </ul>
             </div>
-            {itemInfo.map((item) => {
+            {itemInfo.map((good) => {
               return (
-                <div key={item.id}>
+                <div key={good.id}>
                   <p>
-                    <Link to={`/items/${item.id}`}>
+                    <Link to={`/goods/${good.id}`}>
                       <img
-                        src={`/images/${item.image}`}
-                        alt={`${item.name}`}
+                        src={`/images/${good.image}`}
+                        alt={`${good.name}`}
                         style={{ width: '200px', height: '150' }}
                       />
-                      {item.name}+{item.description}+{item.color}+{item.price}
+                      {good.name}+{good.description}+{good.color}+{good.price}
                     </Link>
                   </p>
                 </div>
