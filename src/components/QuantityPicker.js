@@ -33,6 +33,22 @@ const QuantityPicker = (item) => {
     setQuantity(Math.max(1, enteredQuantity));
   };
 
+  const checkLogIn = () => {
+    const storedSession = localStorage.getItem('session');
+    if (storedSession) {
+      // 저장된 세션 정보가 있는 경우, JSON 문자열을 파싱하여 JavaScript 객체로 변환
+      const session = JSON.parse(storedSession);
+
+      // 이제 'session' 변수를 사용하여 세션 정보에 접근할 수 있습니다.
+      console.log(session.userId); // 예: 123
+      console.log(session.username); // 예: "exampleUser"
+      // 다른 세션 정보들을 필요에 따라 사용할 수 있습니다.
+    } else {
+      // 저장된 세션 정보가 없는 경우, 사용자가 로그인해야 할 수 있습니다.
+      // 로그인 페이지로 리디렉션 또는 사용자에게 로그인을 요청하는 메시지를 표시하는 등의 조치를 취할 수 있습니다.
+    }
+  };
+
   // post로 장바구니 정보 데이터 베이스에 구현하기
 
   return (
@@ -48,7 +64,7 @@ const QuantityPicker = (item) => {
         />
       </QuantityInputContainer>
       <Link to={`/cart/?itemId=${item.itemValue}&itemQuantity=${quantity}`}>
-        <SubmitButton>ADD</SubmitButton>
+        <SubmitButton onClick={checkLogIn}>ADD</SubmitButton>
       </Link>
     </div>
   );

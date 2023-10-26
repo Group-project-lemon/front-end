@@ -4,7 +4,7 @@ import { apiClient } from '../utils/apiClient';
 import '../styles/main.css';
 import QuantityPicker from './QuantityPicker';
 
-function ItemContent() {
+function GoodContent() {
   const { goodID } = useParams();
   const [goodInfo, setItemInfo] = useState([{ id: 0, name: 'item' }]);
 
@@ -60,4 +60,4 @@ function ItemContent() {
   );
 }
 
-export default ItemContent;
+export default GoodContent;
