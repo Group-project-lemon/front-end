@@ -12,6 +12,7 @@ require('dotenv').config(); // 환경변수 dotenv모듈 사용
 // express-session 모듈을 로드
 const session = require('express-session');
 
+app.use(express.static('public'));
 app.use(
   session({
     secret: process.env.session_key, // secret 키 값들은 외부에 노출이 되면 보안 상 문제가 발생할 수 있다.
@@ -22,6 +23,14 @@ app.use(
     },
   }),
 );
+//cors문제 해결
+app.use((req, res, next) => {
+  res.header('Access-Control-Allow-Origin', 'http://localhost:3000'); // 클라이언트 도메인
+  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE');
+  res.header('Access-Control-Allow-Headers', 'Content-Type');
+  res.header('Access-Control-Allow-Credentials', 'true');
+  next();
+});
 
 //////////////////// 라우팅
 
@@ -51,7 +60,7 @@ app.get('/shopall', (req, res) => {
   db.query('SELECT * FROM ICT_TEAM.items', (err, data) => {
     if (!err) {
       console.log(data);
-      res.send(data); //응답을 클라이언트에 보낸다.
+      res.json(data); //응답을 클라이언트에 보낸다.
     } else {
       console.log(err);
     }

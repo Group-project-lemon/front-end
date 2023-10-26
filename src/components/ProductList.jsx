@@ -19,7 +19,10 @@ function ProductList() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const result = await apiClient({ url: '/shopall' });
+        const result = await apiClient({ 
+          url: '/shopall',
+          method: 'GET',
+        });
         setItemInfo(result);
       } catch (error) {
         console.error('데이터를 가져오는 중 오류가 발생했습니다.');
@@ -29,7 +32,7 @@ function ProductList() {
     fetchData();
   }, []);
 
-  //console.log(itemInfo);
+  console.log(itemInfo);
 
   return (
     <>
