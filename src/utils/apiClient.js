@@ -22,9 +22,9 @@ axios.interceptors.response.use(
 
 export const apiClient = async ({
   url,
-  method = 'GET',
-  data = null,
-  params = null,
+  method,
+  data,
+  params,
   baseURL = 'http://localhost:4000',
   headers,
   config,

@@ -30,7 +30,9 @@ const CartPage = () => {
 
     const fetchData = async () => {
       try {
-        const result = await apiClient({ url: `${itemUrl}` });
+        const result = await apiClient({ 
+          url: `${itemUrl}`
+        });
         setItemInfo(result);
       } catch (error) {
         console.error('데이터를 가져오는 중 오류가 발생했습니다.');
