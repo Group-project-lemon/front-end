@@ -8,7 +8,14 @@ require('dotenv').config(); // 환경변수 dotenv모듈 사용
 const app = express();
 const PORT = 4000;
 
-app.use(express.urlencoded({ extended: false })); // post 방식으로 데이터가 들어올때 json 형태로 데이터를 로드
+//뷰엔진 사용하기 위한 설정
+// app.set('view engine', 'ejs');
+// app.set('views', './views');
+
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json());
+
+// app.use(express.urlencoded({ extended: true })); // post 방식으로 데이터가 들어올때 json 형태로 데이터를 로드
 app.use(express.static('public'));
 app.use(
   session({
@@ -20,32 +27,66 @@ app.use(
     },
   }),
 );
+
+//cors문제 해결
+const cors = require('cors'); // CORS 미들웨어 추가
+app.use(
+  cors({
+    origin: 'http://localhost:3000', // 허용할 도메인을 여기에 지정
+    methods: 'GET, POST, PUT, DELETE',
+    credentials: true,
+  }),
+);
 app.use((req, res, next) => {
-  //cors문제 해결
   res.header('Access-Control-Allow-Origin', 'http://localhost:3000'); // 클라이언트 도메인
   res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE');
   res.header('Access-Control-Allow-Headers', 'Content-Type');
   res.header('Access-Control-Allow-Credentials', 'true');
   next();
 });
+//
+app.use((req, res, next) => {
+  res.locals.email = '';
+  res.locals.password = '';
 
-app.get('/', function (req, res) {
-  // session안에 logined에 데이터가 존재하지 않는다면 /user 주소로 요청
-  if (!req.session.logined) {
-    res.redirect('/user');
+  if (req.session.member) {
+    res.locals.user_id = req.session.user.email;
+    res.locals.name = req.session.user.password;
   }
-  // session안에 logined에 데이터가 존재한다면 메인화면 주소로 요청
-  else {
-    res.redirect('/products/shopall/');
-  }
+  next();
 });
 
-// auth 회원가입
-// user 로그인
-const user = require('./routes/user')();
-app.use('/user', user);
+app.post('/login', (req, res) => {
+  const email = req.body.email;
+  const password = req.body.password;
 
-// products
+  if (!email || !password) {
+    // 이메일 또는 비밀번호가 누락된 경우
+    console.log('이메일 또는 비밀번호가 누락');
+    return res.send('이메일 또는 비밀번호가 누락');
+  }
+
+  var sql = `select * from user where email=? and password=?`;
+  var values = [email, password];
+
+  db.query(sql, values, function (err, result) {
+    if (err) {
+      console.logr('데이터베이스 오류');
+      return res.send('데이터베이스 오류');
+    }
+    if (result.length === 0) {
+      // 로그인 실패: 사용자가 없음
+      console.log('사용자가 없음');
+      return res.send('사용자가 없음');
+    } else {
+      // 로그인 성공: 사용자 정보를 세션에 저장
+      console.log('로그인 성공');
+      req.session.user = result[0];
+      return res.send('로그인 성공');
+    }
+  });
+});
+
 // 모든 상품 #all
 app.get('/shopall', (req, res) => {
   //res.send(dummyData)
@@ -121,7 +162,7 @@ app.post('/goods/:productID', (req, res) => {
 app.get('/cart', (req, res) => {
   console.log('root');
   db.query('SELECT * FROM ICT_TEAM.items.cart = ?', (err4, data4) => {
-    if (!err) {
+    if (!err4) {
       console.log(data4);
       res.send(data4); //응답을 클라이언트에 보낸다.
     } else {

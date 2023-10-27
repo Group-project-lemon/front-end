@@ -1,36 +1,7 @@
-// import { apiClient } from "./utils/apiClient";
+
 import React, { useState } from 'react';
 import styled from 'styled-components';
 import { Link } from 'react-router-dom';
-
-// // 상품 목록 호출 함수
-// const getMainBar = () => {
-//   return apiClient({
-//     url: "/",
-//   });
-// };
-
-// function Dropdown() {
-//   const [selectedValue, setSelectedValue] = useState(''); // State to store the selected value
-
-//   const handleSelectChange = (e) => {
-//     setSelectedValue(e.target.value);
-//   };
-
-//   return (
-//     <div>
-//       <select value={selectedValue} onChange={handleSelectChange}>
-//         <option value="">Sign in</option>
-//         <option value="option1">my orders</option>
-//         <option value="option2">my addresses</option>
-//         <option value="option3">my account</option>
-//         <br />
-//         <option value="option3">log out</option>
-//       </select>
-//       <p>Selected option: {selectedValue}</p>
-//     </div>
-//   );
-// }
 
 export default function MainBar() {
   return (
@@ -39,7 +10,7 @@ export default function MainBar() {
         <HeaderStyle>free shipping above € 100 in the Netherlands</HeaderStyle>
         <ButtonsStyle>
           <CartStyle to="/cart">shopping cart</CartStyle>
-          <CartStyle to="/register">
+          <CartStyle to="/login">
             <div>Sign up{/* <Dropdown /> */}</div>
           </CartStyle>
         </ButtonsStyle>
@@ -53,7 +24,7 @@ export default function MainBar() {
         </OrderedList>
         <OrderedList>
           <li>
-            <StyledLink to="/products/bags">bags</StyledLink>
+            <StyledLink to="/products/bag">bags</StyledLink>
           </li>
         </OrderedList>
         <OrderedList>
