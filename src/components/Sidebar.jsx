@@ -13,7 +13,7 @@ export default function Sidebar() {
             </Link>
           </li>
           <li>
-            <Link to="/products/bags" className="listitems">
+            <Link to="/products/bag" className="listitems">
               bags
             </Link>
           </li>

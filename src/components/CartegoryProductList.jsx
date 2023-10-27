@@ -1,27 +1,22 @@
 import { useEffect, useState } from 'react';
+import { useParams } from 'react-router-dom';
 import { BrowserRouter as Router, Route, Link, Routes } from 'react-router-dom';
 import { apiClient } from '../utils/apiClient';
 import Sidebar from './Sidebar';
 import '../styles/main.css';
 
-function ProductList() {
-  //  서버와 통신
-  // const product = { id: 1, name: 'chodaegyun' };
-  // return (
-  //   <div key={product.id}>
-  //     <p>
-  //       {product.id} + {product.name}
-  //     </p>
-  //   </div>
-  // );
+function CartegoryProductList() {
 
+  const { productID } = useParams();
   const [itemInfo, setItemInfo] = useState([{ id: 0, name: 'shopall' }]);
 
+
   useEffect(() => {
+    const productsUrl = `/products/${productID}`;
     const fetchData = async () => {
       try {
         const result = await apiClient({ 
-          url: '/products/:productID',
+          url: `${productsUrl}`,
           method: 'GET',
         });
         setItemInfo(result);
@@ -31,7 +26,7 @@ function ProductList() {
     };
 
     fetchData();
-  }, []);
+  }, [productID]); // productID가 변경될 때마다 데이터 다시 가져옴
 
   console.log(itemInfo);
 
@@ -67,4 +62,4 @@ function ProductList() {
   );
 }
 
-export default ProductList;
+export default CartegoryProductList;

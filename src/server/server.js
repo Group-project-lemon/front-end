@@ -6,7 +6,7 @@ const db = require('./config/db.js');
 require('dotenv').config(); // 환경변수 dotenv모듈 사용
 
 const app = express();
-const PORT = process.env.PORT || 4000;
+const PORT = 4000;
 
 app.use(express.urlencoded({ extended: false })); // post 방식으로 데이터가 들어올때 json 형태로 데이터를 로드
 app.use(express.static('public'));
@@ -69,7 +69,7 @@ app.get('/products/:productID', (req, res) => {
     (err1, data1) => {
       if (!err1) {
         console.log(data1);
-        res.send(data1); // 클라이언트에 응답을 보냅니다.
+        res.json(data1); // 클라이언트에 응답을 보냅니다.
       } else {
         console.log(err1);
         res
@@ -152,7 +152,7 @@ app.get('/delivery', (req, res) => {
   console.log('root');
   db.query('SELECT * FROM ICT_TEAM.orders_detail = ?', (err6, data6) => {
     if (!err6) {
-      console.log(data);
+      console.log(data6);
       res.send(data6); //응답을 클라이언트에 보낸다.
     } else {
       console.log(err6);
