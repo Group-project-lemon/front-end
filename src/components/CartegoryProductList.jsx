@@ -21,7 +21,7 @@ function ProductList() {
     const fetchData = async () => {
       try {
         const result = await apiClient({ 
-          url: '/shopall',
+          url: '/products/:productID',
           method: 'GET',
         });
         setItemInfo(result);

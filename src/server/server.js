@@ -1,17 +1,14 @@
 const express = require('express');
-const app = express();
-const PORT = process.env.PORT || 4000;
+const ejs = require('ejs');
+const session = require('express-session');
+const bodyParser = require('body-parser');
 const db = require('./config/db.js');
-
-app.set('views', __dirname + '/views'); // view 페이지 주소 자동경로
-app.set('view engine', 'ejs'); // view 엔진(백엔트 테스트 목적)
-app.use(express.urlencoded({ extended: false })); // post 방식으로 데이터가 들어올때 json 형태로 데이터를 로드
-
 require('dotenv').config(); // 환경변수 dotenv모듈 사용
 
-// express-session 모듈을 로드
-const session = require('express-session');
+const app = express();
+const PORT = process.env.PORT || 4000;
 
+app.use(express.urlencoded({ extended: false })); // post 방식으로 데이터가 들어올때 json 형태로 데이터를 로드
 app.use(express.static('public'));
 app.use(
   session({
@@ -23,18 +20,14 @@ app.use(
     },
   }),
 );
-//cors문제 해결
 app.use((req, res, next) => {
+  //cors문제 해결
   res.header('Access-Control-Allow-Origin', 'http://localhost:3000'); // 클라이언트 도메인
   res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE');
   res.header('Access-Control-Allow-Headers', 'Content-Type');
   res.header('Access-Control-Allow-Credentials', 'true');
   next();
 });
-
-//////////////////// 라우팅
-
-// localhost:4000/ 홈페이지 첫접속시
 
 app.get('/', function (req, res) {
   // session안에 logined에 데이터가 존재하지 않는다면 /user 주소로 요청

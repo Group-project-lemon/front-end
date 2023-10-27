@@ -1,4 +1,4 @@
-import ProductList from '../components/ProductList';
+import CartegoryProductList from '../components/CartegoryProductList';
 import MainBar from '../components/MainBar';
 import Footer from '../components/Footer';
 
@@ -8,7 +8,7 @@ function App(data) {
   return (
     <>
       <MainBar />
-      <ProductList />
+      <CartegoryProductList />
       <Footer />
     </>
   );

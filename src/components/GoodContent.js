@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { apiClient } from '../utils/apiClient';
 import '../styles/main.css';
+import Sidebar from './Sidebar';
 import QuantityPicker from './QuantityPicker';
 
 function GoodContent() {
@@ -31,12 +32,9 @@ function GoodContent() {
       <div>
         {goodInfo && (
           <div className="products">
-            <div>
-              <ul>
-                <li>
-                  <button>shop all-sidebar</button>
-                </li>
-              </ul>
+            <div className="categories">
+              Catergory
+              <Sidebar />
             </div>
             {goodInfo.map((good) => {
               return (

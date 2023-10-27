@@ -53,17 +53,17 @@ export default function MainBar() {
         </OrderedList>
         <OrderedList>
           <li>
-            <StyledLink to="/?category=groceries">bags</StyledLink>
+            <StyledLink to="/products/bags">bags</StyledLink>
           </li>
         </OrderedList>
         <OrderedList>
           <li>
-            <StyledLink to="/footwear">footwear</StyledLink>
+            <StyledLink to="/products/footwear">footwear</StyledLink>
           </li>
         </OrderedList>
         <OrderedList>
           <li>
-            <StyledLink to="/Accessories">accessories</StyledLink>
+            <StyledLink to="/products/accessories">accessories</StyledLink>
           </li>
         </OrderedList>
       </NavStyle>

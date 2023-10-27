@@ -13,17 +13,17 @@ export default function Sidebar() {
             </Link>
           </li>
           <li>
-            <Link to="/?category={groceries}" className="listitems">
+            <Link to="/products/bags" className="listitems">
               bags
             </Link>
           </li>
           <li>
-            <Link to="/footwear" className="listitems">
+            <Link to="/products/footwear" className="listitems">
               footwear
             </Link>
           </li>
           <li>
-            <Link to="/accessories" className="listitems">
+            <Link to="/products/accessories" className="listitems">
               accessories
             </Link>
           </li>
