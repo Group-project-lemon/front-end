@@ -11,6 +11,9 @@
 # production
 /build
 
+#env
+.env
+
 # misc
 .DS_Store
 .env
@@ -22,3 +25,8 @@
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+<<<<<<< HEAD
+=======
+
+database.js
+>>>>>>> 0de98db1a681ae192ae58b18cd91671528b24aa1
