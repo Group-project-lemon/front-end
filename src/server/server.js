@@ -69,7 +69,7 @@ app.post('/login', (req, res) => {
   var sql = `select * from user where email=? and password=?`;
   var values = [email, password];
 
-  db.query(sql, values, function (err, result) {
+  db.query(sql, values, (err, result) => {
     if (err) {
       console.logr('데이터베이스 오류');
       return res.send('데이터베이스 오류');
@@ -81,6 +81,34 @@ app.post('/login', (req, res) => {
     } else {
       // 로그인 성공: 사용자 정보를 세션에 저장
       console.log('로그인 성공');
+      console.log(result);
+      req.session.user = result[0];
+      return res.send('로그인 성공');
+    }
+  });
+});
+
+app.post('/register', (req, res) => {
+  const email = req.body.email;
+  const password = req.body.password;
+
+  if (!email || !password) {
+    // 이메일 또는 비밀번호가 누락된 경우
+    console.log('이메일 또는 비밀번호가 누락');
+    return res.send('이메일 또는 비밀번호가 누락');
+  }
+
+  var sql = 'INSERT INTO ICT_TEAM.user(email, password) VALUES(?, ?)';
+  var values = [email, password];
+
+  db.query(sql, values, (err, result) => {
+    if (err) {
+      console.logr('데이터베이스 오류');
+      return res.send('데이터베이스 오류');
+    } else {
+      // 로그인 성공: 사용자 정보를 세션에 저장
+      console.log('로그인 성공');
+      console.log(result);
       req.session.user = result[0];
       return res.send('로그인 성공');
     }

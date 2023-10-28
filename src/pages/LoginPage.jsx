@@ -43,6 +43,7 @@ export default function LoginForm() {
       } else if (response === '사용자가 없음') {
         // 로그인 실패 시 오류 메시지 표시
         alert('사용자가 없습니다. ');
+        navigate('/register');
       }
     } catch (error) {
       console.error('로그인 중 오류 발생:', error);
