@@ -30,7 +30,19 @@ export default function LoginForm() {
         },
       });
       // console.log(response.status)
-      if (response === '로그인 성공') {
+      
+      // const responseData = JSON.parse(response);
+      if (response.success === '로그인 성공') {
+        // 로그인이 성공하면 서버에서 세션 ID를 받아 쿠키에 저장
+        const sessionId = response.userLogId;
+        console.log(sessionId);
+        const expirationDate = new Date();
+        expirationDate.setDate(expirationDate.getDate() + 7);
+
+        // 세션 ID를 쿠키로 저장//path는 쿠키에 접근할 수 있는 경로는 현재/로 설정되어 있으니 모든 경로에서 접근이 가능
+        document.cookie = `session_id=${sessionId}; expires=${expirationDate.toUTCString()}; path=/`;
+        console.log(document.cookie);
+      
         // 로그인 성공 시 홈페이지로 이동
         alert('로그인 성공');
         navigate('/shopall');
