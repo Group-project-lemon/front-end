@@ -82,11 +82,16 @@ app.post('/login', (req, res) => {
       // 로그인 성공: 사용자 정보를 세션에 저장
       console.log('로그인 성공');
       console.log(result);
-      req.session.user = result[0].id;
+      const user = {
+        id: result[0].id, // 새로 생성된 사용자 ID
+        email: email,
+        password: password,
+      };
+      req.session.user = user;
       console.log(req.session.user);
       return res.json({
+        user: user,
         success: '로그인 성공',
-        userLogId: req.session.user,
       });
     }
   });
@@ -113,8 +118,17 @@ app.post('/register', (req, res) => {
       // 로그인 성공: 사용자 정보를 세션에 저장
       console.log('로그인 성공');
       console.log(result);
-      req.session.user = result[0];
-      return res.send('로그인 성공');
+      const user = {
+        id: result.insertId, // 새로 생성된 사용자 ID
+        email: email,
+        password: password,
+      };
+      req.session.user = user;
+      console.log(req.session.user);
+      return res.json({
+        user: user,
+        success: '로그인 성공',
+      });
     }
   });
 });

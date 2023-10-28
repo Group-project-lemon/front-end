@@ -29,12 +29,10 @@ export default function LoginForm() {
           'Content-Type': 'application/json',
         },
       });
-      // console.log(response.status)
-      
-      // const responseData = JSON.parse(response);
+
       if (response.success === '로그인 성공') {
         // 로그인이 성공하면 서버에서 세션 ID를 받아 쿠키에 저장
-        const sessionId = response.userLogId;
+        const sessionId = response.user.id;
         console.log(sessionId);
         const expirationDate = new Date();
         expirationDate.setDate(expirationDate.getDate() + 7);
