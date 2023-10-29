@@ -221,16 +221,22 @@ app.post('/cart', (req, res) => {
 
 //cart 장바구니 페이지
 //상세페이지에 담았던 정보 가져오기
+
 app.get('/cart', (req, res) => {
-  console.log('root');
-  db.query('SELECT * FROM ICT_TEAM.items.cart = ?', (err4, data4) => {
-    if (!err4) {
-      console.log(data4);
-      res.send(data4); //응답을 클라이언트에 보낸다.
-    } else {
-      console.log(err4);
-    }
-  });
+  const user_id = req.cookies.session_id;
+  console.log(user_id);
+  db.query(
+    'SELECT * FROM ICT_TEAM.cart WHERE user_id= ?',
+    [user_id],
+    (err4, data4) => {
+      if (!err4) {
+        console.log(data4);
+        res.send(data4); //응답을 클라이언트에 보낸다.
+      } else {
+        console.log(err4);
+      }
+    },
+  );
 });
 
 // 결제페이지로 정보 가져가기

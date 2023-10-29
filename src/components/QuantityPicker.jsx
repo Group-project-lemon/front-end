@@ -37,10 +37,11 @@ const QuantityPicker = (item) => {
 
   const checkLogIn = async () => {
     console.log(document.cookie);
+    console.log(`${item.itemValue}`);
 
     try {
       const productsUrl = '/cart';
-      const result = await apiClient({
+      await apiClient({
         url: productsUrl,
         method: 'POST',
         data: {
@@ -52,7 +53,7 @@ const QuantityPicker = (item) => {
       console.log('장바구니 담기 성공');
       navigate('/cart');
     } catch (error) {
-      console.error('데이터를 가져오는 중 오류가 발생했습니다.');
+      console.error('데이터를 보내는 중 오류가 발생했습니다.');
     }
   };
 
