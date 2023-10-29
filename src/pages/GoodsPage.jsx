@@ -1,15 +1,15 @@
 import MainBar from '../components/MainBar';
-import ItemContent from '../components/ItemContent';
+import GoodContent from '../components/GoodContent';
 import Footer from '../components/Footer';
 
-const ItemsPage = () => {
+const GoodsPage = () => {
   return (
     <div>
       <MainBar />
-      <ItemContent />
+      <GoodContent />
       <Footer />
     </div>
   );
 };
 
-export default ItemsPage;
+export default GoodsPage;

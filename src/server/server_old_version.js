@@ -1,4 +1,83 @@
-export const dummyData = [
+// express 모듈 호출
+const express = require('express');
+const app = express();
+const PORT = process.env.PORT || 4000;
+const db = require('./config/database.js');
+const cors = require('cors');
+
+app.use(cors());
+app.use(express.static('public'));
+//cors해결을 위한 코드
+app.use((req, res, next) => {
+  res.header('Access-Control-Allow-Origin', 'http://localhost:3000'); // 클라이언트 도메인
+  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE');
+  res.header('Access-Control-Allow-Headers', 'Content-Type');
+  res.header('Access-Control-Allow-Credentials', 'true');
+  next();
+});
+
+// http://localhost:4000/ 으로 접속 시 응답메시지 출력
+app.get('/shopall', (req, res) => {
+  //res.send(dummyData)
+  console.log('root');
+  db.query('SELECT * FROM ICT_TEAM.items', (err, data) => {
+    if (!err) {
+      console.log(data);
+      res.send(data); //응답을 클라이언트에 보낸다.
+    } else {
+      console.log(err);
+    }
+  });
+});
+
+app.get('/items/:itemId', (req, res) => {
+  console.log('/items/:itemId');
+  const id = req.params.itemId;
+  console.log(id);
+  db.query(`select * from ICT_TEAM.items where id = '${id}'`, (err, data) => {
+    if (!err) {
+      console.log(data);
+      res.send(data); //응답을 클라이언트에 보낸다.
+    } else {
+      console.log(err);
+    }
+  });
+});
+
+app.get('/user', (req, res) => {
+  console.log('/user');
+  db.query('select * from ICT_TEAM.user', (err, data) => {
+    if (!err) {
+      console.log(data);
+      res.send(data); //응답을 클라이언트에 보낸다.
+    } else {
+      console.log(err);
+    }
+  });
+});
+
+app.get('/user/:id', (req, res) => {
+  console.log('/user/:id');
+  const id = req.params.id;
+  console.log(id);
+  db.query(`select * from ICT_TEAM.user where id = ${id}`, (err, data) => {
+    if (!err) {
+      console.log(data);
+      res.send(data); //응답을 클라이언트에 보낸다.
+    } else {
+      console.log(err);
+    }
+  });
+});
+
+app.listen(PORT, () => {
+  console.log(`Server run : http://localhost:${PORT}/`);
+});
+
+// 디비에서 받아와서 하는 코드 작성해보기
+// 그 사이에 아래 더미데이터는 잠시 멈추어 두기
+/*
+const dummyData = [
   {
     id: 1,
     title: 'iPhone 9',
@@ -573,4 +652,5 @@ export const dummyData = [
       'https://i.dummyjson.com/data/products/30/thumbnail.jpg',
     ],
   },
-];
+]
+*/

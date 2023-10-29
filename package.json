@@ -8,6 +8,7 @@
     "@testing-library/user-event": "^13.5.0",
     "aws-sdk": "^2.1480.0",
     "axios": "^1.5.1",
+    "cookie-parser": "^1.4.6",
     "cors": "^2.8.5",
     "express-session": "^1.17.3",
     "mysql": "^2.18.1",

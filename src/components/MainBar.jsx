@@ -1,21 +1,6 @@
-// import { apiClient } from "./utils/apiClient";
-import React from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
 import { Link } from 'react-router-dom';
-
-// // 상품 목록 호출 함수
-// const getMainBar = () => {
-//   return apiClient({
-//     url: "/",
-//   });
-// };
-
-// function Dropdown() {
-//   const [selectedValue, setSelectedValue] = useState(''); // State to store the selected value
-
-//   const handleSelectChange = (e) => {
-//     setSelectedValue(e.target.value);
-//   };
 
 export default function MainBar() {
   return (
@@ -38,17 +23,17 @@ export default function MainBar() {
         </OrderedList>
         <OrderedList>
           <li>
-            <StyledLink to="/?category=groceries">bags</StyledLink>
+            <StyledLink to="/products/bag">bags</StyledLink>
           </li>
         </OrderedList>
         <OrderedList>
           <li>
-            <StyledLink to="/footwear">footwear</StyledLink>
+            <StyledLink to="/products/footwear">footwear</StyledLink>
           </li>
         </OrderedList>
         <OrderedList>
           <li>
-            <StyledLink to="/Accessories">accessories</StyledLink>
+            <StyledLink to="/products/accessories">accessories</StyledLink>
           </li>
         </OrderedList>
       </NavStyle>

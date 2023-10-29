@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
-import { BrowserRouter as Router, Route, Link, Routes } from 'react-router-dom';
+import { apiClient } from '../utils/apiClient';
+import { useNavigate } from 'react-router-dom';
 
 const QuantityInputContainer = styled.div`
   display: flex;
@@ -27,13 +28,34 @@ const SubmitButton = styled.button`
 
 const QuantityPicker = (item) => {
   const [quantity, setQuantity] = useState(1);
+  const navigate = useNavigate();
 
   const handleQuantityChange = (event) => {
     const enteredQuantity = parseInt(event.target.value, 10) || 1;
     setQuantity(Math.max(1, enteredQuantity));
   };
 
-  // post로 장바구니 정보 데이터 베이스에 구현하기
+  const checkLogIn = async () => {
+    console.log(document.cookie);
+    console.log(`${item.itemValue}`);
+
+    try {
+      const productsUrl = '/cart';
+      await apiClient({
+        url: productsUrl,
+        method: 'POST',
+        data: {
+          itemId: `${item.itemValue}`,
+          itemQuantity: `${quantity}`,
+        },
+      });
+      // POST 요청이 성공하면 cart 페이지로 이동
+      console.log('장바구니 담기 성공');
+      navigate('/cart');
+    } catch (error) {
+      console.error('데이터를 보내는 중 오류가 발생했습니다.');
+    }
+  };
 
   return (
     <div>
@@ -47,9 +69,7 @@ const QuantityPicker = (item) => {
           onChange={handleQuantityChange}
         />
       </QuantityInputContainer>
-      <Link to={`/cart/?itemId=${item.itemValue}&itemQuantity=${quantity}`}>
-        <SubmitButton>ADD</SubmitButton>
-      </Link>
+      <SubmitButton onClick={checkLogIn}>ADD</SubmitButton>
     </div>
   );
 };

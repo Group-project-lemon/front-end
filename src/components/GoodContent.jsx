@@ -42,7 +42,7 @@ function ItemContent() {
                     <img
                       src={`/images/${item.image}`}
                       alt={`${item.name}`}
-                      style={{ width: '200', height: '150' }}
+                      style={{ width: '200px', height: '150' }}
                     />
                     {item.name}+{item.description}+{item.color}+{item.price}
                     <QuantityPicker itemValue={`${item.id}`} />

@@ -3,6 +3,7 @@ const ejs = require('ejs');
 const session = require('express-session');
 const bodyParser = require('body-parser');
 const db = require('./config/db.js');
+const cookieParser = require('cookie-parser'); // cookie-parser 미들웨어를 불러옵니다.
 require('dotenv').config(); // 환경변수 dotenv모듈 사용
 
 const app = express();
@@ -14,6 +15,8 @@ const PORT = 4000;
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
+// cookie-parser 미들웨어를 사용하여 클라이언트로부터 전송된 쿠키 데이터를 파싱합니다.
+app.use(cookieParser());
 
 // app.use(express.urlencoded({ extended: true })); // post 방식으로 데이터가 들어올때 json 형태로 데이터를 로드
 app.use(express.static('public'));
@@ -188,33 +191,52 @@ app.get('/goods/:goodID', (req, res) => {
 });
 
 // 상세페이지에서 장바구니 담기 localhost:4000/goods/1
-app.post('/goods/:productID', (req, res) => {
-  console.log('root');
-  db.query(
-    'INSERT INTO ICT_TEAM.cart(id, user_id, quantitiy, items_id) VALUES(?, ?, ?, ?)',
-    (err3, data3) => {
-      if (!err3) {
-        console.log(data3);
-        res.send(data3); //응답을 클라이언트에 보낸다.
-      } else {
-        console.log(err3);
-      }
-    },
-  );
+app.post('/cart', (req, res) => {
+  const itemsId = req.body.itemId; // 아이템 ID를 쿼리 매개변수에서 가져옵니다.
+  const itemQuantity = req.body.itemQuantity; // 수량을 쿼리 매개변수에서 가져옵니다.
+  const user_id = req.cookies.session_id; // 여기에서 사용자 ID를 가져오는 방법을 정의해야 합니다. (예: document.cookie)
+
+  if (itemsId && itemQuantity && user_id) {
+    db.query(
+      'INSERT INTO ICT_TEAM.cart(user_id, quantity, items_id) VALUES(?, ?, ?)',
+      [user_id, itemQuantity, itemsId],
+      (err, data) => {
+        if (!err) {
+          console.log(data);
+          res.send(data); // 응답을 클라이언트에 보냅니다.
+        } else {
+          console.log(err);
+          res
+            .status(500)
+            .send('장바구니에 상품을 추가하는 중 오류가 발생했습니다.');
+        }
+      },
+    );
+  } else {
+    res
+      .status(400)
+      .send('잘못된 요청입니다. 아이템 ID, 수량 및 사용자 ID가 필요합니다.');
+  }
 });
 
 //cart 장바구니 페이지
 //상세페이지에 담았던 정보 가져오기
+
 app.get('/cart', (req, res) => {
-  console.log('root');
-  db.query('SELECT * FROM ICT_TEAM.items.cart = ?', (err4, data4) => {
-    if (!err4) {
-      console.log(data4);
-      res.send(data4); //응답을 클라이언트에 보낸다.
-    } else {
-      console.log(err4);
-    }
-  });
+  const user_id = req.cookies.session_id;
+  console.log(user_id);
+  db.query(
+    'SELECT * FROM ICT_TEAM.cart WHERE user_id= ?',
+    [user_id],
+    (err4, data4) => {
+      if (!err4) {
+        console.log(data4);
+        res.send(data4); //응답을 클라이언트에 보낸다.
+      } else {
+        console.log(err4);
+      }
+    },
+  );
 });
 
 // 결제페이지로 정보 가져가기

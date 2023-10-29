@@ -14,6 +14,8 @@ export default function LoginForm() {
 
     const email = emailRef.current.value;
     const password = passwordRef.current.value;
+    console.log(email);
+    console.log(password);
 
     try {
       const response = await apiClient({
@@ -97,7 +99,6 @@ const MainStyle = styled(Link)`
   display: flex;
   justify-content: center;
   align-items: center;
-
   color: black;
   font-size: 40px;
   text-decoration: none;
