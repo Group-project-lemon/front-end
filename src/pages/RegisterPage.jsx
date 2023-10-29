@@ -6,16 +6,30 @@ export default function LoginForm() {
   const [formData, setFormData] = useState({
     email: '',
     password: '',
+    fullName: 'fullname',
+    address: 'address',
+    phone: 'phone',
   });
 
-  const history = useNavigate();
+  const navigate = useNavigate();
 
   const handleRegister = async () => {
-    try {
-      await registerUser(formData);
-      history.push('/');
-    } catch (err) {
-      console.log('Registration failed: ', err);
+    console.log("click register button");
+    const response = await fetch("http://localhost:4000/registProc", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(formData),
+    });
+
+    if (response.status === 200) {
+      alert("회원 등록이 되었습니다.");
+      navigate("/");
+    } else {
+      // Handle other statuses or errors
+      const data = await response.json();
+      alert(data.message || "Login failed!");
     }
   };
 
@@ -52,7 +66,7 @@ export default function LoginForm() {
             placeholder="Enter your password"
           />
         </fieldset>
-        <button type="submit" onClick={handleRegister}>
+        <button type="button" onClick={handleRegister}>
           Register
         </button>
       </form>

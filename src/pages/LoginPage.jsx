@@ -8,13 +8,34 @@ export default function LoginForm() {
   const emailRef = useRef();
   const passwordRef = useRef();
 
-  const submitForm = (e) => {
+  const submitForm = async (e) => {
     e.preventDefault();
 
     const email = emailRef.current.value;
     const password = passwordRef.current.value;
+    try {
+      const response = await fetch("http://localhost:4000/loginProc", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email, password }),
+        credentials: "include",
+      });
 
-    navigate(`/detail?email=${email}&password=${password}`);
+      if (response.status === 200) {
+
+        alert("로그인이 되었습니다.");
+        navigate("/");
+      } else {
+        // Handle other statuses or errors
+        const data = await response.json();
+        alert(data.message || "Login failed!");
+      }
+    } catch (error) {
+      console.error("There was an error during the login process:", error);
+      alert("There was an error. Please try again later.");
+    }
   };
 
   return (

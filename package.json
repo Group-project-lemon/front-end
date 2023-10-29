@@ -9,6 +9,7 @@
     "axios": "^1.5.1",
     "cors": "^2.8.5",
     "mysql": "^2.18.1",
+    "prettier": "^2.7.3",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-router-dom": "^6.17.0",
@@ -40,5 +41,10 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
-  }
+  },
+  "description": "(여기 있는 README파일은 추후에 변경될 예정입니다.) test 안녕하세요. 저희 이경진, 류재화, 신민지, 조대근, 임태욱 다섯 명의 팀원들이 협력하여 쇼핑몰 홈페이지를 만드는 것을 목표로 합니다. https://www.stickylemon.nl/ 여기 웹사이트를 참조하는 것이나 기능적인 부분, 데이터, 레이아웃 등은 저희가 직접 제작하고 수정합니다.",
+  "main": "index.js",
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
 }
