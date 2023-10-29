@@ -18,6 +18,7 @@ const CartPage = () => {
   const [searchParams] = useSearchParams();
   const queryItemId = searchParams.get('itemId');
   const queryItemQuantity = searchParams.get('itemQuantity');
+  const queryUserId = searchParams.get('session_id');
 
   console.log(queryItemId);
   console.log(queryItemQuantity);

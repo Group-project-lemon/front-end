@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
-import { BrowserRouter as Router, Route, Link, Routes } from 'react-router-dom';
+import { apiClient } from '../utils/apiClient';
+import { useNavigate } from 'react-router-dom';
 
 const QuantityInputContainer = styled.div`
   display: flex;
@@ -27,29 +28,33 @@ const SubmitButton = styled.button`
 
 const QuantityPicker = (item) => {
   const [quantity, setQuantity] = useState(1);
+  const navigate = useNavigate();
 
   const handleQuantityChange = (event) => {
     const enteredQuantity = parseInt(event.target.value, 10) || 1;
     setQuantity(Math.max(1, enteredQuantity));
   };
 
-  const checkLogIn = () => {
-    const storedSession = localStorage.getItem('session');
-    if (storedSession) {
-      // 저장된 세션 정보가 있는 경우, JSON 문자열을 파싱하여 JavaScript 객체로 변환
-      const session = JSON.parse(storedSession);
+  const checkLogIn = async () => {
+    console.log(document.cookie);
 
-      // 이제 'session' 변수를 사용하여 세션 정보에 접근할 수 있습니다.
-      console.log(session.userId); // 예: 123
-      console.log(session.username); // 예: "exampleUser"
-      // 다른 세션 정보들을 필요에 따라 사용할 수 있습니다.
-    } else {
-      // 저장된 세션 정보가 없는 경우, 사용자가 로그인해야 할 수 있습니다.
-      // 로그인 페이지로 리디렉션 또는 사용자에게 로그인을 요청하는 메시지를 표시하는 등의 조치를 취할 수 있습니다.
+    try {
+      const productsUrl = '/cart';
+      const result = await apiClient({
+        url: productsUrl,
+        method: 'POST',
+        data: {
+          itemId: `${item.itemValue}`,
+          itemQuantity: `${quantity}`,
+        },
+      });
+      // POST 요청이 성공하면 cart 페이지로 이동
+      console.log('장바구니 담기 성공');
+      navigate('/cart');
+    } catch (error) {
+      console.error('데이터를 가져오는 중 오류가 발생했습니다.');
     }
   };
-
-  // post로 장바구니 정보 데이터 베이스에 구현하기
 
   return (
     <div>
@@ -63,9 +68,7 @@ const QuantityPicker = (item) => {
           onChange={handleQuantityChange}
         />
       </QuantityInputContainer>
-      <Link to={`/cart/?itemId=${item.itemValue}&itemQuantity=${quantity}`}>
-        <SubmitButton onClick={checkLogIn}>ADD</SubmitButton>
-      </Link>
+      <SubmitButton onClick={checkLogIn}>ADD</SubmitButton>
     </div>
   );
 };
