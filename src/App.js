@@ -1,6 +1,6 @@
 import { Route, Routes } from 'react-router-dom';
-import axios from 'axios';
-import { useEffect, useState } from 'react';
+// import axios from 'axios';
+// import { useEffect, useState } from 'react';
 import CartPage from './pages/CartPage';
 import DeliveryPage from './pages/DeliveryPage';
 import ItemsPage from './pages/ItemsPage';

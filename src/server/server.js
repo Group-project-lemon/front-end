@@ -1,13 +1,42 @@
-// express 모듈 호출
 const express = require('express');
-const app = express();
-const PORT = process.env.PORT || 4000;
-const db = require('./config/database.js');
-const cors = require('cors');
+const ejs = require('ejs');
+const session = require('express-session');
+const bodyParser = require('body-parser');
+const db = require('./config/db.js');
+require('dotenv').config(); // 환경변수 dotenv모듈 사용
 
-app.use(cors());
+const app = express();
+const PORT = 4000;
+
+//뷰엔진 사용하기 위한 설정
+// app.set('view engine', 'ejs');
+// app.set('views', './views');
+
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json());
+
+// app.use(express.urlencoded({ extended: true })); // post 방식으로 데이터가 들어올때 json 형태로 데이터를 로드
 app.use(express.static('public'));
-//cors해결을 위한 코드
+app.use(
+  session({
+    secret: process.env.session_key, // secret 키 값들은 외부에 노출이 되면 보안 상 문제가 발생할 수 있다.
+    resave: false,
+    saveUninitialized: false,
+    cookie: {
+      maxAge: 600000,
+    },
+  }),
+);
+
+//cors문제 해결
+const cors = require('cors'); // CORS 미들웨어 추가
+app.use(
+  cors({
+    origin: 'http://localhost:3000', // 허용할 도메인을 여기에 지정
+    methods: 'GET, POST, PUT, DELETE',
+    credentials: true,
+  }),
+);
 app.use((req, res, next) => {
   res.header('Access-Control-Allow-Origin', 'http://localhost:3000'); // 클라이언트 도메인
   res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE');
@@ -15,26 +44,229 @@ app.use((req, res, next) => {
   res.header('Access-Control-Allow-Credentials', 'true');
   next();
 });
+//
+app.use((req, res, next) => {
+  res.locals.email = '';
+  res.locals.password = '';
 
-// http://localhost:4000/ 으로 접속 시 응답메시지 출력
+  if (req.session.member) {
+    res.locals.user_id = req.session.user.email;
+    res.locals.name = req.session.user.password;
+  }
+  next();
+});
+
+app.post('/login', (req, res) => {
+  const email = req.body.email;
+  const password = req.body.password;
+
+  if (!email || !password) {
+    // 이메일 또는 비밀번호가 누락된 경우
+    console.log('이메일 또는 비밀번호가 누락');
+    return res.send('이메일 또는 비밀번호가 누락');
+  }
+
+  var sql = `select * from user where email=? and password=?`;
+  var values = [email, password];
+
+  db.query(sql, values, (err, result) => {
+    if (err) {
+      console.logr('데이터베이스 오류');
+      return res.send('데이터베이스 오류');
+    }
+    if (result.length === 0) {
+      // 로그인 실패: 사용자가 없음
+      console.log('사용자가 없음');
+      return res.send('사용자가 없음');
+    } else {
+      // 로그인 성공: 사용자 정보를 세션에 저장
+      console.log('로그인 성공');
+      console.log(result);
+      const user = {
+        id: result[0].id, // 새로 생성된 사용자 ID
+        email: email,
+        password: password,
+      };
+      req.session.user = user;
+      console.log(req.session.user);
+      return res.json({
+        user: user,
+        success: '로그인 성공',
+      });
+    }
+  });
+});
+
+app.post('/register', (req, res) => {
+  const email = req.body.email;
+  const password = req.body.password;
+
+  if (!email || !password) {
+    // 이메일 또는 비밀번호가 누락된 경우
+    console.log('이메일 또는 비밀번호가 누락');
+    return res.send('이메일 또는 비밀번호가 누락');
+  }
+
+  var sql = 'INSERT INTO ICT_TEAM.user(email, password) VALUES(?, ?)';
+  var values = [email, password];
+
+  db.query(sql, values, (err, result) => {
+    if (err) {
+      console.logr('데이터베이스 오류');
+      return res.send('데이터베이스 오류');
+    } else {
+      // 로그인 성공: 사용자 정보를 세션에 저장
+      console.log('로그인 성공');
+      console.log(result);
+      const user = {
+        id: result.insertId, // 새로 생성된 사용자 ID
+        email: email,
+        password: password,
+      };
+      req.session.user = user;
+      console.log(req.session.user);
+      return res.json({
+        user: user,
+        success: '로그인 성공',
+      });
+    }
+  });
+});
+
+// 모든 상품 #all
 app.get('/shopall', (req, res) => {
   //res.send(dummyData)
   console.log('root');
   db.query('SELECT * FROM ICT_TEAM.items', (err, data) => {
     if (!err) {
       console.log(data);
-      res.send(data); //응답을 클라이언트에 보낸다.
+      res.json(data); //응답을 클라이언트에 보낸다.
     } else {
       console.log(err);
     }
   });
 });
 
-app.get('/items/:itemId', (req, res) => {
-  console.log('/items/:itemId');
-  const id = req.params.itemId;
-  console.log(id);
-  db.query(`select * from ICT_TEAM.items where id = '${id}'`, (err, data) => {
+// 카테고리별 상품 localhost:4000/products/bag
+app.get('/products/:productID', (req, res) => {
+  const category = req.params.productID; // 요청 URL에서 productID를 가져옵니다.
+  db.query(
+    'SELECT * FROM ICT_TEAM.items WHERE category = ?',
+    [category],
+    (err1, data1) => {
+      if (!err1) {
+        console.log(data1);
+        res.json(data1); // 클라이언트에 응답을 보냅니다.
+      } else {
+        console.log(err1);
+        res
+          .status(500)
+          .send('데이터베이스에서 정보를 가져오는 동안 오류가 발생했습니다.'); // 에러 응답을 보냅니다.
+      }
+    },
+  );
+});
+
+// goods 제품상세 페이지 localhost:4000/goods/1
+app.get('/goods/:goodID', (req, res) => {
+  const good = req.params.goodID; // 요청 URL에서 goodID를 가져옵니다.
+  db.query(
+    'SELECT * FROM ICT_TEAM.items WHERE id = ?',
+    [good],
+    (err2, data2) => {
+      if (!err2) {
+        console.log(data2);
+        res.send(data2); // 클라이언트에 응답을 보냅니다.
+      } else {
+        console.log(err2);
+        res
+          .status(500)
+          .send('데이터베이스에서 정보를 가져오는 동안 오류가 발생했습니다.'); // 에러 응답을 보냅니다.
+      }
+    },
+  );
+});
+
+// 상세페이지에서 장바구니 담기 localhost:4000/goods/1
+app.post('/goods/:productID', (req, res) => {
+  console.log('root');
+  db.query(
+    'INSERT INTO ICT_TEAM.cart(id, user_id, quantitiy, items_id) VALUES(?, ?, ?, ?)',
+    (err3, data3) => {
+      if (!err3) {
+        console.log(data3);
+        res.send(data3); //응답을 클라이언트에 보낸다.
+      } else {
+        console.log(err3);
+      }
+    },
+  );
+});
+
+//cart 장바구니 페이지
+//상세페이지에 담았던 정보 가져오기
+app.get('/cart', (req, res) => {
+  console.log('root');
+  db.query('SELECT * FROM ICT_TEAM.items.cart = ?', (err4, data4) => {
+    if (!err4) {
+      console.log(data4);
+      res.send(data4); //응답을 클라이언트에 보낸다.
+    } else {
+      console.log(err4);
+    }
+  });
+});
+
+// 결제페이지로 정보 가져가기
+app.post('/cart', (req, res) => {
+  console.log('root');
+  db.query(
+    'INSERT INTO ICT_TEAM.orders_detail(id, orders_id, items_id, quantity, unit_price, total_price) VALUES(?, ?, ?, ?, ?, ?)',
+    (err5, data5) => {
+      if (!err5) {
+        console.log(data5);
+        res.send(data5); //응답을 클라이언트에 보낸다.
+      } else {
+        console.log(err5);
+      }
+    },
+  );
+});
+
+//delivery 주문페이지
+// 주문할 물건 정보 가져오기
+app.get('/delivery', (req, res) => {
+  console.log('root');
+  db.query('SELECT * FROM ICT_TEAM.orders_detail = ?', (err6, data6) => {
+    if (!err6) {
+      console.log(data6);
+      res.send(data6); //응답을 클라이언트에 보낸다.
+    } else {
+      console.log(err6);
+    }
+  });
+});
+
+// 배송정보입력 후 주문완료
+app.post('/delivery', (req, res) => {
+  console.log('root');
+  db.query(
+    'INSERT INTO ICT_TEAM.delivery(id, fullname, address, phone, request) VALUES(?, ?, ?, ?, ?)',
+    (err7, data7) => {
+      if (!err7) {
+        console.log(data7);
+        res.send(data7); //응답을 클라이언트에 보낸다.
+      } else {
+        console.log(err7);
+      }
+    },
+  );
+});
+
+//order 주문목록 조회
+app.get('/order', (req, res) => {
+  console.log('root');
+  db.query('SELECT * FROM ICT_TEAM.delivery = ?', (err, data) => {
     if (!err) {
       console.log(data);
       res.send(data); //응답을 클라이언트에 보낸다.
@@ -44,613 +276,23 @@ app.get('/items/:itemId', (req, res) => {
   });
 });
 
-app.get('/user', (req, res) => {
-  console.log('/user');
-  db.query('select * from ICT_TEAM.user', (err, data) => {
-    if (!err) {
-      console.log(data);
-      res.send(data); //응답을 클라이언트에 보낸다.
-    } else {
-      console.log(err);
-    }
-  });
+// 주문취소 쿼리문 조건에 유저 정보 확인이 필요
+app.post('/cancel', (req, res) => {
+  console.log('root');
+  db.query(
+    'DELETE * FROM ICT_TEAM.delivery WHERE order_status = Processing',
+    (err, data) => {
+      if (!err) {
+        console.log(data);
+        res.send(data); //응답을 클라이언트에 보낸다.
+      } else {
+        console.log(err);
+      }
+    },
+  );
 });
 
-app.get('/user/:id', (req, res) => {
-  console.log('/user/:id');
-  const id = req.params.id;
-  console.log(id);
-  db.query(`select * from ICT_TEAM.user where id = ${id}`, (err, data) => {
-    if (!err) {
-      console.log(data);
-      res.send(data); //응답을 클라이언트에 보낸다.
-    } else {
-      console.log(err);
-    }
-  });
-});
-
+// 포트접속
 app.listen(PORT, () => {
-  console.log(`Server run : http://localhost:${PORT}/`);
+  console.log(`Server run : Server:${PORT}/ Start`);
 });
-
-// 디비에서 받아와서 하는 코드 작성해보기
-// 그 사이에 아래 더미데이터는 잠시 멈추어 두기
-/*
-const dummyData = [
-  {
-    id: 1,
-    title: 'iPhone 9',
-    description: 'An apple mobile which is nothing like apple',
-    price: 549,
-    discountPercentage: 12.96,
-    rating: 4.69,
-    stock: 94,
-    brand: 'Apple',
-    category: 'smartphones',
-    thumbnail: 'https://i.dummyjson.com/data/products/1/thumbnail.jpg',
-    images: [
-      'https://i.dummyjson.com/data/products/1/1.jpg',
-      'https://i.dummyjson.com/data/products/1/2.jpg',
-      'https://i.dummyjson.com/data/products/1/3.jpg',
-      'https://i.dummyjson.com/data/products/1/4.jpg',
-      'https://i.dummyjson.com/data/products/1/thumbnail.jpg',
-    ],
-  },
-  {
-    id: 2,
-    title: 'iPhone X',
-    description:
-      'SIM-Free, Model A19211 6.5-inch Super Retina HD display with OLED technology A12 Bionic chip with ...',
-    price: 899,
-    discountPercentage: 17.94,
-    rating: 4.44,
-    stock: 34,
-    brand: 'Apple',
-    category: 'smartphones',
-    thumbnail: 'https://i.dummyjson.com/data/products/2/thumbnail.jpg',
-    images: [
-      'https://i.dummyjson.com/data/products/2/1.jpg',
-      'https://i.dummyjson.com/data/products/2/2.jpg',
-      'https://i.dummyjson.com/data/products/2/3.jpg',
-      'https://i.dummyjson.com/data/products/2/thumbnail.jpg',
-    ],
-  },
-  {
-    id: 3,
-    title: 'Samsung Universe 9',
-    description:
-      "Samsung's new variant which goes beyond Galaxy to the Universe",
-    price: 1249,
-    discountPercentage: 15.46,
-    rating: 4.09,
-    stock: 36,
-    brand: 'Samsung',
-    category: 'smartphones',
-    thumbnail: 'https://i.dummyjson.com/data/products/3/thumbnail.jpg',
-    images: ['https://i.dummyjson.com/data/products/3/1.jpg'],
-  },
-  {
-    id: 4,
-    title: 'OPPOF19',
-    description: 'OPPO F19 is officially announced on April 2021.',
-    price: 280,
-    discountPercentage: 17.91,
-    rating: 4.3,
-    stock: 123,
-    brand: 'OPPO',
-    category: 'smartphones',
-    thumbnail: 'https://i.dummyjson.com/data/products/4/thumbnail.jpg',
-    images: [
-      'https://i.dummyjson.com/data/products/4/1.jpg',
-      'https://i.dummyjson.com/data/products/4/2.jpg',
-      'https://i.dummyjson.com/data/products/4/3.jpg',
-      'https://i.dummyjson.com/data/products/4/4.jpg',
-      'https://i.dummyjson.com/data/products/4/thumbnail.jpg',
-    ],
-  },
-  {
-    id: 5,
-    title: 'Huawei P30',
-    description:
-      'Huawei’s re-badged P30 Pro New Edition was officially unveiled yesterday in Germany and now the device has made its way to the UK.',
-    price: 499,
-    discountPercentage: 10.58,
-    rating: 4.09,
-    stock: 32,
-    brand: 'Huawei',
-    category: 'smartphones',
-    thumbnail: 'https://i.dummyjson.com/data/products/5/thumbnail.jpg',
-    images: [
-      'https://i.dummyjson.com/data/products/5/1.jpg',
-      'https://i.dummyjson.com/data/products/5/2.jpg',
-      'https://i.dummyjson.com/data/products/5/3.jpg',
-    ],
-  },
-  {
-    id: 6,
-    title: 'MacBook Pro',
-    description:
-      'MacBook Pro 2021 with mini-LED display may launch between September, November',
-    price: 1749,
-    discountPercentage: 11.02,
-    rating: 4.57,
-    stock: 83,
-    brand: 'Apple',
-    category: 'laptops',
-    thumbnail: 'https://i.dummyjson.com/data/products/6/thumbnail.png',
-    images: [
-      'https://i.dummyjson.com/data/products/6/1.png',
-      'https://i.dummyjson.com/data/products/6/2.jpg',
-      'https://i.dummyjson.com/data/products/6/3.png',
-      'https://i.dummyjson.com/data/products/6/4.jpg',
-    ],
-  },
-  {
-    id: 7,
-    title: 'Samsung Galaxy Book',
-    description:
-      'Samsung Galaxy Book S (2020) Laptop With Intel Lakefield Chip, 8GB of RAM Launched',
-    price: 1499,
-    discountPercentage: 4.15,
-    rating: 4.25,
-    stock: 50,
-    brand: 'Samsung',
-    category: 'laptops',
-    thumbnail: 'https://i.dummyjson.com/data/products/7/thumbnail.jpg',
-    images: [
-      'https://i.dummyjson.com/data/products/7/1.jpg',
-      'https://i.dummyjson.com/data/products/7/2.jpg',
-      'https://i.dummyjson.com/data/products/7/3.jpg',
-      'https://i.dummyjson.com/data/products/7/thumbnail.jpg',
-    ],
-  },
-  {
-    id: 8,
-    title: 'Microsoft Surface Laptop 4',
-    description:
-      'Style and speed. Stand out on HD video calls backed by Studio Mics. Capture ideas on the vibrant touchscreen.',
-    price: 1499,
-    discountPercentage: 10.23,
-    rating: 4.43,
-    stock: 68,
-    brand: 'Microsoft Surface',
-    category: 'laptops',
-    thumbnail: 'https://i.dummyjson.com/data/products/8/thumbnail.jpg',
-    images: [
-      'https://i.dummyjson.com/data/products/8/1.jpg',
-      'https://i.dummyjson.com/data/products/8/2.jpg',
-      'https://i.dummyjson.com/data/products/8/3.jpg',
-      'https://i.dummyjson.com/data/products/8/4.jpg',
-      'https://i.dummyjson.com/data/products/8/thumbnail.jpg',
-    ],
-  },
-  {
-    id: 9,
-    title: 'Infinix INBOOK',
-    description:
-      'Infinix Inbook X1 Ci3 10th 8GB 256GB 14 Win10 Grey – 1 Year Warranty',
-    price: 1099,
-    discountPercentage: 11.83,
-    rating: 4.54,
-    stock: 96,
-    brand: 'Infinix',
-    category: 'laptops',
-    thumbnail: 'https://i.dummyjson.com/data/products/9/thumbnail.jpg',
-    images: [
-      'https://i.dummyjson.com/data/products/9/1.jpg',
-      'https://i.dummyjson.com/data/products/9/2.png',
-      'https://i.dummyjson.com/data/products/9/3.png',
-      'https://i.dummyjson.com/data/products/9/4.jpg',
-      'https://i.dummyjson.com/data/products/9/thumbnail.jpg',
-    ],
-  },
-  {
-    id: 10,
-    title: 'HP Pavilion 15-DK1056WM',
-    description:
-      'HP Pavilion 15-DK1056WM Gaming Laptop 10th Gen Core i5, 8GB, 256GB SSD, GTX 1650 4GB, Windows 10',
-    price: 1099,
-    discountPercentage: 6.18,
-    rating: 4.43,
-    stock: 89,
-    brand: 'HP Pavilion',
-    category: 'laptops',
-    thumbnail: 'https://i.dummyjson.com/data/products/10/thumbnail.jpeg',
-    images: [
-      'https://i.dummyjson.com/data/products/10/1.jpg',
-      'https://i.dummyjson.com/data/products/10/2.jpg',
-      'https://i.dummyjson.com/data/products/10/3.jpg',
-      'https://i.dummyjson.com/data/products/10/thumbnail.jpeg',
-    ],
-  },
-  {
-    id: 11,
-    title: 'perfume Oil',
-    description:
-      'Mega Discount, Impression of Acqua Di Gio by GiorgioArmani concentrated attar perfume Oil',
-    price: 13,
-    discountPercentage: 8.4,
-    rating: 4.26,
-    stock: 65,
-    brand: 'Impression of Acqua Di Gio',
-    category: 'fragrances',
-    thumbnail: 'https://i.dummyjson.com/data/products/11/thumbnail.jpg',
-    images: [
-      'https://i.dummyjson.com/data/products/11/1.jpg',
-      'https://i.dummyjson.com/data/products/11/2.jpg',
-      'https://i.dummyjson.com/data/products/11/3.jpg',
-      'https://i.dummyjson.com/data/products/11/thumbnail.jpg',
-    ],
-  },
-  {
-    id: 12,
-    title: 'Brown Perfume',
-    description: 'Royal_Mirage Sport Brown Perfume for Men & Women - 120ml',
-    price: 40,
-    discountPercentage: 15.66,
-    rating: 4,
-    stock: 52,
-    brand: 'Royal_Mirage',
-    category: 'fragrances',
-    thumbnail: 'https://i.dummyjson.com/data/products/12/thumbnail.jpg',
-    images: [
-      'https://i.dummyjson.com/data/products/12/1.jpg',
-      'https://i.dummyjson.com/data/products/12/2.jpg',
-      'https://i.dummyjson.com/data/products/12/3.png',
-      'https://i.dummyjson.com/data/products/12/4.jpg',
-      'https://i.dummyjson.com/data/products/12/thumbnail.jpg',
-    ],
-  },
-  {
-    id: 13,
-    title: 'Fog Scent Xpressio Perfume',
-    description:
-      'Product details of Best Fog Scent Xpressio Perfume 100ml For Men cool long lasting perfumes for Men',
-    price: 13,
-    discountPercentage: 8.14,
-    rating: 4.59,
-    stock: 61,
-    brand: 'Fog Scent Xpressio',
-    category: 'fragrances',
-    thumbnail: 'https://i.dummyjson.com/data/products/13/thumbnail.webp',
-    images: [
-      'https://i.dummyjson.com/data/products/13/1.jpg',
-      'https://i.dummyjson.com/data/products/13/2.png',
-      'https://i.dummyjson.com/data/products/13/3.jpg',
-      'https://i.dummyjson.com/data/products/13/4.jpg',
-      'https://i.dummyjson.com/data/products/13/thumbnail.webp',
-    ],
-  },
-  {
-    id: 14,
-    title: 'Non-Alcoholic Concentrated Perfume Oil',
-    description:
-      'Original Al Munakh® by Mahal Al Musk | Our Impression of Climate | 6ml Non-Alcoholic Concentrated Perfume Oil',
-    price: 120,
-    discountPercentage: 15.6,
-    rating: 4.21,
-    stock: 114,
-    brand: 'Al Munakh',
-    category: 'fragrances',
-    thumbnail: 'https://i.dummyjson.com/data/products/14/thumbnail.jpg',
-    images: [
-      'https://i.dummyjson.com/data/products/14/1.jpg',
-      'https://i.dummyjson.com/data/products/14/2.jpg',
-      'https://i.dummyjson.com/data/products/14/3.jpg',
-      'https://i.dummyjson.com/data/products/14/thumbnail.jpg',
-    ],
-  },
-  {
-    id: 15,
-    title: 'Eau De Perfume Spray',
-    description:
-      'Genuine  Al-Rehab spray perfume from UAE/Saudi Arabia/Yemen High Quality',
-    price: 30,
-    discountPercentage: 10.99,
-    rating: 4.7,
-    stock: 105,
-    brand: 'Lord - Al-Rehab',
-    category: 'fragrances',
-    thumbnail: 'https://i.dummyjson.com/data/products/15/thumbnail.jpg',
-    images: [
-      'https://i.dummyjson.com/data/products/15/1.jpg',
-      'https://i.dummyjson.com/data/products/15/2.jpg',
-      'https://i.dummyjson.com/data/products/15/3.jpg',
-      'https://i.dummyjson.com/data/products/15/4.jpg',
-      'https://i.dummyjson.com/data/products/15/thumbnail.jpg',
-    ],
-  },
-  {
-    id: 16,
-    title: 'Hyaluronic Acid Serum',
-    description:
-      "L'OrÃ©al Paris introduces Hyaluron Expert Replumping Serum formulated with 1.5% Hyaluronic Acid",
-    price: 19,
-    discountPercentage: 13.31,
-    rating: 4.83,
-    stock: 110,
-    brand: "L'Oreal Paris",
-    category: 'skincare',
-    thumbnail: 'https://i.dummyjson.com/data/products/16/thumbnail.jpg',
-    images: [
-      'https://i.dummyjson.com/data/products/16/1.png',
-      'https://i.dummyjson.com/data/products/16/2.webp',
-      'https://i.dummyjson.com/data/products/16/3.jpg',
-      'https://i.dummyjson.com/data/products/16/4.jpg',
-      'https://i.dummyjson.com/data/products/16/thumbnail.jpg',
-    ],
-  },
-  {
-    id: 17,
-    title: 'Tree Oil 30ml',
-    description:
-      'Tea tree oil contains a number of compounds, including terpinen-4-ol, that have been shown to kill certain bacteria,',
-    price: 12,
-    discountPercentage: 4.09,
-    rating: 4.52,
-    stock: 78,
-    brand: 'Hemani Tea',
-    category: 'skincare',
-    thumbnail: 'https://i.dummyjson.com/data/products/17/thumbnail.jpg',
-    images: [
-      'https://i.dummyjson.com/data/products/17/1.jpg',
-      'https://i.dummyjson.com/data/products/17/2.jpg',
-      'https://i.dummyjson.com/data/products/17/3.jpg',
-      'https://i.dummyjson.com/data/products/17/thumbnail.jpg',
-    ],
-  },
-  {
-    id: 18,
-    title: 'Oil Free Moisturizer 100ml',
-    description:
-      'Dermive Oil Free Moisturizer with SPF 20 is specifically formulated with ceramides, hyaluronic acid & sunscreen.',
-    price: 40,
-    discountPercentage: 13.1,
-    rating: 4.56,
-    stock: 88,
-    brand: 'Dermive',
-    category: 'skincare',
-    thumbnail: 'https://i.dummyjson.com/data/products/18/thumbnail.jpg',
-    images: [
-      'https://i.dummyjson.com/data/products/18/1.jpg',
-      'https://i.dummyjson.com/data/products/18/2.jpg',
-      'https://i.dummyjson.com/data/products/18/3.jpg',
-      'https://i.dummyjson.com/data/products/18/4.jpg',
-      'https://i.dummyjson.com/data/products/18/thumbnail.jpg',
-    ],
-  },
-  {
-    id: 19,
-    title: 'Skin Beauty Serum.',
-    description:
-      'Product name: rorec collagen hyaluronic acid white face serum riceNet weight: 15 m',
-    price: 46,
-    discountPercentage: 10.68,
-    rating: 4.42,
-    stock: 54,
-    brand: 'ROREC White Rice',
-    category: 'skincare',
-    thumbnail: 'https://i.dummyjson.com/data/products/19/thumbnail.jpg',
-    images: [
-      'https://i.dummyjson.com/data/products/19/1.jpg',
-      'https://i.dummyjson.com/data/products/19/2.jpg',
-      'https://i.dummyjson.com/data/products/19/3.png',
-      'https://i.dummyjson.com/data/products/19/thumbnail.jpg',
-    ],
-  },
-  {
-    id: 20,
-    title: 'Freckle Treatment Cream- 15gm',
-    description:
-      "Fair & Clear is Pakistan's only pure Freckle cream which helpsfade Freckles, Darkspots and pigments. Mercury level is 0%, so there are no side effects.",
-    price: 70,
-    discountPercentage: 16.99,
-    rating: 4.06,
-    stock: 140,
-    brand: 'Fair & Clear',
-    category: 'skincare',
-    thumbnail: 'https://i.dummyjson.com/data/products/20/thumbnail.jpg',
-    images: [
-      'https://i.dummyjson.com/data/products/20/1.jpg',
-      'https://i.dummyjson.com/data/products/20/2.jpg',
-      'https://i.dummyjson.com/data/products/20/3.jpg',
-      'https://i.dummyjson.com/data/products/20/4.jpg',
-      'https://i.dummyjson.com/data/products/20/thumbnail.jpg',
-    ],
-  },
-  {
-    id: 21,
-    title: '- Daal Masoor 500 grams',
-    description: 'Fine quality Branded Product Keep in a cool and dry place',
-    price: 20,
-    discountPercentage: 4.81,
-    rating: 4.44,
-    stock: 133,
-    brand: 'Saaf & Khaas',
-    category: 'groceries',
-    thumbnail: 'https://i.dummyjson.com/data/products/21/thumbnail.png',
-    images: [
-      'https://i.dummyjson.com/data/products/21/1.png',
-      'https://i.dummyjson.com/data/products/21/2.jpg',
-      'https://i.dummyjson.com/data/products/21/3.jpg',
-    ],
-  },
-  {
-    id: 22,
-    title: 'Elbow Macaroni - 400 gm',
-    description: 'Product details of Bake Parlor Big Elbow Macaroni - 400 gm',
-    price: 14,
-    discountPercentage: 15.58,
-    rating: 4.57,
-    stock: 146,
-    brand: 'Bake Parlor Big',
-    category: 'groceries',
-    thumbnail: 'https://i.dummyjson.com/data/products/22/thumbnail.jpg',
-    images: [
-      'https://i.dummyjson.com/data/products/22/1.jpg',
-      'https://i.dummyjson.com/data/products/22/2.jpg',
-      'https://i.dummyjson.com/data/products/22/3.jpg',
-    ],
-  },
-  {
-    id: 23,
-    title: 'Orange Essence Food Flavou',
-    description:
-      'Specifications of Orange Essence Food Flavour For Cakes and Baking Food Item',
-    price: 14,
-    discountPercentage: 8.04,
-    rating: 4.85,
-    stock: 26,
-    brand: 'Baking Food Items',
-    category: 'groceries',
-    thumbnail: 'https://i.dummyjson.com/data/products/23/thumbnail.jpg',
-    images: [
-      'https://i.dummyjson.com/data/products/23/1.jpg',
-      'https://i.dummyjson.com/data/products/23/2.jpg',
-      'https://i.dummyjson.com/data/products/23/3.jpg',
-      'https://i.dummyjson.com/data/products/23/4.jpg',
-      'https://i.dummyjson.com/data/products/23/thumbnail.jpg',
-    ],
-  },
-  {
-    id: 24,
-    title: 'cereals muesli fruit nuts',
-    description:
-      'original fauji cereal muesli 250gm box pack original fauji cereals muesli fruit nuts flakes breakfast cereal break fast faujicereals cerels cerel foji fouji',
-    price: 46,
-    discountPercentage: 16.8,
-    rating: 4.94,
-    stock: 113,
-    brand: 'fauji',
-    category: 'groceries',
-    thumbnail: 'https://i.dummyjson.com/data/products/24/thumbnail.jpg',
-    images: [
-      'https://i.dummyjson.com/data/products/24/1.jpg',
-      'https://i.dummyjson.com/data/products/24/2.jpg',
-      'https://i.dummyjson.com/data/products/24/3.jpg',
-      'https://i.dummyjson.com/data/products/24/4.jpg',
-      'https://i.dummyjson.com/data/products/24/thumbnail.jpg',
-    ],
-  },
-  {
-    id: 25,
-    title: 'Gulab Powder 50 Gram',
-    description: 'Dry Rose Flower Powder Gulab Powder 50 Gram • Treats Wounds',
-    price: 70,
-    discountPercentage: 13.58,
-    rating: 4.87,
-    stock: 47,
-    brand: 'Dry Rose',
-    category: 'groceries',
-    thumbnail: 'https://i.dummyjson.com/data/products/25/thumbnail.jpg',
-    images: [
-      'https://i.dummyjson.com/data/products/25/1.png',
-      'https://i.dummyjson.com/data/products/25/2.jpg',
-      'https://i.dummyjson.com/data/products/25/3.png',
-      'https://i.dummyjson.com/data/products/25/4.jpg',
-      'https://i.dummyjson.com/data/products/25/thumbnail.jpg',
-    ],
-  },
-  {
-    id: 26,
-    title: 'Plant Hanger For Home',
-    description:
-      'Boho Decor Plant Hanger For Home Wall Decoration Macrame Wall Hanging Shelf',
-    price: 41,
-    discountPercentage: 17.86,
-    rating: 4.08,
-    stock: 131,
-    brand: 'Boho Decor',
-    category: 'home-decoration',
-    thumbnail: 'https://i.dummyjson.com/data/products/26/thumbnail.jpg',
-    images: [
-      'https://i.dummyjson.com/data/products/26/1.jpg',
-      'https://i.dummyjson.com/data/products/26/2.jpg',
-      'https://i.dummyjson.com/data/products/26/3.jpg',
-      'https://i.dummyjson.com/data/products/26/4.jpg',
-      'https://i.dummyjson.com/data/products/26/5.jpg',
-      'https://i.dummyjson.com/data/products/26/thumbnail.jpg',
-    ],
-  },
-  {
-    id: 27,
-    title: 'Flying Wooden Bird',
-    description:
-      'Package Include 6 Birds with Adhesive Tape Shape: 3D Shaped Wooden Birds Material: Wooden MDF, Laminated 3.5mm',
-    price: 51,
-    discountPercentage: 15.58,
-    rating: 4.41,
-    stock: 17,
-    brand: 'Flying Wooden',
-    category: 'home-decoration',
-    thumbnail: 'https://i.dummyjson.com/data/products/27/thumbnail.webp',
-    images: [
-      'https://i.dummyjson.com/data/products/27/1.jpg',
-      'https://i.dummyjson.com/data/products/27/2.jpg',
-      'https://i.dummyjson.com/data/products/27/3.jpg',
-      'https://i.dummyjson.com/data/products/27/4.jpg',
-      'https://i.dummyjson.com/data/products/27/thumbnail.webp',
-    ],
-  },
-  {
-    id: 28,
-    title: '3D Embellishment Art Lamp',
-    description:
-      '3D led lamp sticker Wall sticker 3d wall art light on/off button  cell operated (included)',
-    price: 20,
-    discountPercentage: 16.49,
-    rating: 4.82,
-    stock: 54,
-    brand: 'LED Lights',
-    category: 'home-decoration',
-    thumbnail: 'https://i.dummyjson.com/data/products/28/thumbnail.jpg',
-    images: [
-      'https://i.dummyjson.com/data/products/28/1.jpg',
-      'https://i.dummyjson.com/data/products/28/2.jpg',
-      'https://i.dummyjson.com/data/products/28/3.png',
-      'https://i.dummyjson.com/data/products/28/4.jpg',
-      'https://i.dummyjson.com/data/products/28/thumbnail.jpg',
-    ],
-  },
-  {
-    id: 29,
-    title: 'Handcraft Chinese style',
-    description:
-      'Handcraft Chinese style art luxury palace hotel villa mansion home decor ceramic vase with brass fruit plate',
-    price: 60,
-    discountPercentage: 15.34,
-    rating: 4.44,
-    stock: 7,
-    brand: 'luxury palace',
-    category: 'home-decoration',
-    thumbnail: 'https://i.dummyjson.com/data/products/29/thumbnail.webp',
-    images: [
-      'https://i.dummyjson.com/data/products/29/1.jpg',
-      'https://i.dummyjson.com/data/products/29/2.jpg',
-      'https://i.dummyjson.com/data/products/29/3.webp',
-      'https://i.dummyjson.com/data/products/29/4.webp',
-      'https://i.dummyjson.com/data/products/29/thumbnail.webp',
-    ],
-  },
-  {
-    id: 30,
-    title: 'Key Holder',
-    description:
-      'Attractive DesignMetallic materialFour key hooksReliable & DurablePremium Quality',
-    price: 30,
-    discountPercentage: 2.92,
-    rating: 4.92,
-    stock: 54,
-    brand: 'Golden',
-    category: 'home-decoration',
-    thumbnail: 'https://i.dummyjson.com/data/products/30/thumbnail.jpg',
-    images: [
-      'https://i.dummyjson.com/data/products/30/1.jpg',
-      'https://i.dummyjson.com/data/products/30/2.jpg',
-      'https://i.dummyjson.com/data/products/30/3.jpg',
-      'https://i.dummyjson.com/data/products/30/thumbnail.jpg',
-    ],
-  },
-]
-*/

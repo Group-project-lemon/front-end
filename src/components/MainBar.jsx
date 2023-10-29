@@ -1,5 +1,5 @@
 // import { apiClient } from "./utils/apiClient";
-import React, { useState } from 'react';
+import React from 'react';
 import styled from 'styled-components';
 import { Link } from 'react-router-dom';
 
@@ -17,21 +17,6 @@ import { Link } from 'react-router-dom';
 //     setSelectedValue(e.target.value);
 //   };
 
-//   return (
-//     <div>
-//       <select value={selectedValue} onChange={handleSelectChange}>
-//         <option value="">Sign in</option>
-//         <option value="option1">my orders</option>
-//         <option value="option2">my addresses</option>
-//         <option value="option3">my account</option>
-//         <br />
-//         <option value="option3">log out</option>
-//       </select>
-//       <p>Selected option: {selectedValue}</p>
-//     </div>
-//   );
-// }
-
 export default function MainBar() {
   return (
     <div>
@@ -39,8 +24,8 @@ export default function MainBar() {
         <HeaderStyle>free shipping above € 100 in the Netherlands</HeaderStyle>
         <ButtonsStyle>
           <CartStyle to="/cart">shopping cart</CartStyle>
-          <CartStyle to="/register">
-            <div>Sign up{/* <Dropdown /> */}</div>
+          <CartStyle to="/login">
+            <div>Sign up</div>
           </CartStyle>
         </ButtonsStyle>
       </Container>
