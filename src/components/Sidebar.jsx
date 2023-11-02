@@ -1,29 +1,28 @@
 import { Link } from 'react-router-dom';
 
 export default function Sidebar() {
-  // const navigate = useNavigate();
-
   return (
     <>
       <nav>
         <ul className="orderlists">
+          Category
           <li>
             <Link to="/" className="listitems">
               shop all
             </Link>
           </li>
           <li>
-            <Link to="/?category={groceries}" className="listitems">
+            <Link to="/products/bag" className="listitems">
               bags
             </Link>
           </li>
           <li>
-            <Link to="/footwear" className="listitems">
+            <Link to="/products/footwear" className="listitems">
               footwear
             </Link>
           </li>
           <li>
-            <Link to="/accessories" className="listitems">
+            <Link to="/products/accessories" className="listitems">
               accessories
             </Link>
           </li>

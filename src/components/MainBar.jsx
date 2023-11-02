@@ -46,28 +46,54 @@ export default function MainBar() {
     }
   };
 
-  console.log(userInfo)
-  console.log(userInfo.email)
+  console.log(userInfo);
+  console.log(userInfo.email);
 
   const isLogin = userInfo && userInfo.email;
 
   return (
-    <Container>
+    <>
+      <Container>
+        <ButtonsStyle>
+          <ShippingStyle>free shipping over 50,000won in Korea</ShippingStyle>
+
+          {isLogin ? (
+            <>
+              <CartStyle to="/cart">CART</CartStyle>
+              <CartStyle onClick={logout}>LOGOUT</CartStyle>
+            </>
+          ) : (
+            <>
+              <CartStyle to="/login">LOGIN</CartStyle>
+              <CartStyle to="/register">SIGNUP</CartStyle>
+            </>
+          )}
+        </ButtonsStyle>
+      </Container>
       <LogoStyle to="/">STICKY LEMON</LogoStyle>
-      <ButtonsStyle>
-        {isLogin ? (
-          <>
-            <CartStyle to="/cart">CART</CartStyle>
-            <CartStyle onClick={logout}>LOGOUT</CartStyle>
-          </>
-        ) : (
-          <>
-            <CartStyle to="/login">LOGIN</CartStyle>
-            <CartStyle to="/register">SIGNUP</CartStyle>
-          </>
-        )}
-      </ButtonsStyle>
-    </Container>
+      <NavStyle>
+        <OrderedList>
+          <li>
+            <StyledLink to="/">shop all</StyledLink>
+          </li>
+        </OrderedList>
+        <OrderedList>
+          <li>
+            <StyledLink to="/products/bag">bags</StyledLink>
+          </li>
+        </OrderedList>
+        <OrderedList>
+          <li>
+            <StyledLink to="/products/footwear">footwear</StyledLink>
+          </li>
+        </OrderedList>
+        <OrderedList>
+          <li>
+            <StyledLink to="/products/accessories">accessories</StyledLink>
+          </li>
+        </OrderedList>
+      </NavStyle>
+    </>
   );
 }
 
@@ -80,13 +106,25 @@ const Container = styled.div`
 `;
 
 const ButtonsStyle = styled.div`
+  flex-grow: 1; // 이를 추가하여 가능한 많은 공간을 차지하게 합니다.
   display: flex;
+  justify-content: center; // 내용을 중앙에 배치합니다.
+  align-items: center;
+  color: white;
+`;
+
+const ShippingStyle = styled.div`
+  flex-grow: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 `;
 
 const CartStyle = styled(Link)`
-  color: blue;
+  display: flex;
   text-decoration: none;
-  margin-left: 35px;
+  margin-left: 30px;
+  margin-right: 10px;
   color: white;
 `;
 
@@ -96,7 +134,42 @@ const LogoStyle = styled(Link)`
   justify-content: center; // 내용을 중앙에 배치합니다.
   align-items: center;
 
-  color: white;
+  color: black;
   font-size: 40px;
   text-decoration: none;
 `;
+
+const NavStyle = styled.nav`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`;
+
+const OrderedList = styled.ol`
+  list-style-type: none;
+  text-decoration: none;
+`;
+
+const StyledLink = styled(Link)`
+  color: #82693d;
+  text-decoration: none;
+
+  &:hover {
+    color: #e4c6b0;
+  }
+`;
+
+// const CategoryContainer = styled.nav`
+//   display: flex;
+//   justify-content: center;
+
+//   text-align: center;
+// `;
+
+// const CategoryStyle = styled(Link)`
+//   text-decoration: none;
+//   color: #82693d;
+//   &:hover {
+//     color: #e4c6b0;
+//   }
+// `;

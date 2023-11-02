@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { apiClient } from '../utils/apiClient';
 import '../styles/main.css';
 import styled from 'styled-components';
+import Sidebar from './Sidebar';
 
 export default function ProductList() {
   const [items, setItems] = useState([]);
@@ -22,6 +23,7 @@ export default function ProductList() {
 
   return (
     <ProductsContainer>
+      <Sidebar />
       <ProductsList>
         {items.map((item) => (
           <ItemCard key={item.id}>
