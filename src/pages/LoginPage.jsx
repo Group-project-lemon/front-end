@@ -73,8 +73,9 @@ export default function LoginForm() {
           <LoginButtonStyle type="submit" onClick={submitForm}>
             Login
           </LoginButtonStyle>
+          <hr />
           <div>
-            <Link to="/register">Create new account</Link>
+            <SignUpStyle to="/register">Create new account</SignUpStyle>
           </div>
         </form>
       </ContainerStyle>
@@ -127,6 +128,10 @@ const InputStyle = styled.input`
   border: 1px solid;
   font-family: monospace;
   text-align: center;
+
+  &::placeholder {
+    color: lightgray;
+  }
 `;
 
 const LoginButtonStyle = styled.button`
@@ -137,4 +142,26 @@ const LoginButtonStyle = styled.button`
   border: 1px solid;
   font-family: monospace;
   cursor: pointer;
+  &:hover {
+    color: pink;
+    transition: all 100ms ease-in-out;
+  }
+`;
+
+const SignUpStyle = styled(Link)`
+  display: flex;
+  justify-content: center;
+  color: black;
+  width: 320px;
+  font-size: 25px;
+  margin: 20px;
+  text-decoration: none;
+  border-radius: 13px;
+  border: 1px solid;
+  font-family: monospace;
+
+  &:hover {
+    color: pink;
+    transition: all 100ms ease-in-out;
+  }
 `;
