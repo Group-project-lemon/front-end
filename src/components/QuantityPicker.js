@@ -31,10 +31,10 @@ const QuantityPicker = (item) => {
       if (response.status === 200) {
         alert('카트에 담았습니다.');
       } else {
-        alert("카트에 담지 못했습니다.");
+        alert('카트에 담지 못했습니다.');
       }
     } catch (error) {
-      alert("카트에 담지 못했습니다.");
+      alert('카트에 담지 못했습니다.');
     }
   };
 
@@ -51,6 +51,7 @@ const QuantityPicker = (item) => {
         />
       </QuantityInputContainer>
       <SubmitButton onClick={addCart}>ADD</SubmitButton>
+      <Link to="/cart">cart</Link>
     </div>
   );
 };
