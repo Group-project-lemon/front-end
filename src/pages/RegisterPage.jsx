@@ -41,69 +41,75 @@ export default function LoginForm() {
   return (
     <div>
       <MainStyle to="/">sticky lemon</MainStyle>
-      <h1>Register</h1>
-      <form>
-        <fieldset>
-          <label htmlFor="email">Email</label>
-          <input
-            placeholder="Enter your email"
-            required
-            value={formData.email}
-            onChange={(e) =>
-              setFormData({ ...formData, email: e.target.value })
-            }
-            id="email"
-            type="email"
-            name="email"
-            autoComplete="off"
-          />
-        </fieldset>
-        <fieldset>
-          <label htmlFor="password">Password</label>
-          <input
-            required
-            value={formData.password}
-            onChange={(e) =>
-              setFormData({ ...formData, password: e.target.value })
-            }
-            id="password"
-            type="password"
-            name="password"
-            placeholder="Enter your password"
-          />
-        </fieldset>
-        <fieldset>
-          <label htmlFor="fullName">Name</label>
-          <input
-            placeholder="Enter your name"
-            required
-            value={formData.fullName}
-            onChange={(e) =>
-              setFormData({ ...formData, fullName: e.target.value })
-            }
-            id="fullName"
-            type="name"
-            name="fullName"
-            autoComplete="off"
-          />
-        </fieldset>
-        <fieldset>
-          <label htmlFor="phone">Contact number</label>
-          <input
-            placeholder="Enter your phone number"
-            required
-            value={formData.phone}
-            onChange={handlePhoneChange}
-            id="phone"
-            type="number"
-            name="phone"
-            autoComplete="off"
-          />
-        </fieldset>
-        <button type="button" onClick={handleRegister}>
-          Register
-        </button>
-      </form>
+      <div>
+        <h1>Create account</h1>
+        <form>
+          <fieldset>
+            <label htmlFor="email">Email</label>
+            <input
+              placeholder="Enter your email"
+              required
+              value={formData.email}
+              onChange={(e) =>
+                setFormData({ ...formData, email: e.target.value })
+              }
+              id="email"
+              type="email"
+              name="email"
+              autoComplete="off"
+            />
+          </fieldset>
+          <fieldset>
+            <label htmlFor="password">Password</label>
+            <input
+              required
+              value={formData.password}
+              onChange={(e) =>
+                setFormData({ ...formData, password: e.target.value })
+              }
+              id="password"
+              type="password"
+              name="password"
+              placeholder="Enter your password"
+            />
+          </fieldset>
+          <fieldset>
+            <label htmlFor="fullName">Name</label>
+            <input
+              placeholder="Enter your name"
+              required
+              value={formData.fullName}
+              onChange={(e) =>
+                setFormData({ ...formData, fullName: e.target.value })
+              }
+              id="fullName"
+              type="name"
+              name="fullName"
+              autoComplete="off"
+            />
+          </fieldset>
+          <fieldset>
+            <label htmlFor="phone">Contact number</label>
+            <input
+              placeholder="Enter your phone number"
+              required
+              value={formData.phone}
+              onChange={handlePhoneChange}
+              id="phone"
+              type="number"
+              name="phone"
+              autoComplete="off"
+            />
+          </fieldset>
+          <button type="button" onClick={handleRegister}>
+            Register
+          </button>
+        </form>
+        <div>
+          If you have an existing account,&nbsp;
+          <Link to="/login">click here to sign in</Link>
+        </div>
+      </div>
     </div>
   );
 }
