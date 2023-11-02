@@ -6,36 +6,42 @@ export default function LoginForm() {
   const [formData, setFormData] = useState({
     email: '',
     password: '',
-    fullName: 'fullname',
+    fullName: '',
     address: 'address',
-    phone: 'phone',
+    phone: '',
   });
+
+  const handlePhoneChange = (e) => {
+    const validatePhoneNumber = e.target.value.replace(/\D/g, '').slice(0, 11);
+    setFormData({ ...formData, phone: validatePhoneNumber });
+  };
 
   const navigate = useNavigate();
 
   const handleRegister = async () => {
-    console.log("click register button");
-    const response = await fetch("http://localhost:4000/registProc", {
-      method: "POST",
+    console.log('click register button');
+    const response = await fetch('http://localhost:4000/registProc', {
+      method: 'POST',
       headers: {
-        "Content-Type": "application/json",
+        'Content-Type': 'application/json',
       },
       body: JSON.stringify(formData),
     });
 
     if (response.status === 200) {
-      alert("회원 등록이 되었습니다.");
-      navigate("/");
+      alert('회원 등록이 되었습니다.');
+      navigate('/');
     } else {
       // Handle other statuses or errors
       const data = await response.json();
-      alert(data.message || "Login failed!");
+      alert(data.message || 'Register failed!');
     }
   };
 
   return (
     <div>
       <MainStyle to="/">sticky lemon</MainStyle>
+      <h1>Register</h1>
       <form>
         <fieldset>
           <label htmlFor="email">Email</label>
@@ -64,6 +70,34 @@ export default function LoginForm() {
             type="password"
             name="password"
             placeholder="Enter your password"
+          />
+        </fieldset>
+        <fieldset>
+          <label htmlFor="fullName">Name</label>
+          <input
+            placeholder="Enter your name"
+            required
+            value={formData.fullName}
+            onChange={(e) =>
+              setFormData({ ...formData, fullName: e.target.value })
+            }
+            id="fullName"
+            type="name"
+            name="fullName"
+            autoComplete="off"
+          />
+        </fieldset>
+        <fieldset>
+          <label htmlFor="phone">Contact number</label>
+          <input
+            placeholder="Enter your phone number"
+            required
+            value={formData.phone}
+            onChange={handlePhoneChange}
+            id="phone"
+            type="number"
+            name="phone"
+            autoComplete="off"
           />
         </fieldset>
         <button type="button" onClick={handleRegister}>
