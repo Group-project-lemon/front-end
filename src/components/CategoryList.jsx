@@ -37,7 +37,7 @@ function CartegoryList() {
           {itemInfo.map((item) => {
             return (
               <ItemCard key={item.id}>
-                <Link to={`/items/${item.id}`}>
+                <LinkItemStyle to={`/items/${item.id}`}>
                   <ProductImage
                     src={`http://localhost:4000/images/${item.image}`}
                     alt={item.name}
@@ -46,9 +46,9 @@ function CartegoryList() {
                     <ProductTitle>{item.name}</ProductTitle>
                     <ProductDescription>{item.description}</ProductDescription>
                     <ProductDescription>{item.color}</ProductDescription>
-                    <ProductDescription>{item.price}</ProductDescription>
+                    <ProductPrice>{item.price}&nbsp;won</ProductPrice>
                   </ProductInfo>
-                </Link>
+                </LinkItemStyle>
               </ItemCard>
             );
           })}
@@ -81,8 +81,8 @@ const ProductsList = styled.div`
 `;
 
 const ItemCard = styled.div`
-  background-color: #f7f7f7;
-  border: 1px solid #eaeaea;
+  background-color: #f1f5f1;
+  border: 1px;
   border-radius: 5px;
   padding: 1rem;
   width: 220px;
@@ -92,6 +92,10 @@ const ItemCard = styled.div`
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     transform: scale(1.03);
   }
+`;
+
+const LinkItemStyle = styled(Link)`
+  text-decoration: none;
 `;
 
 const ProductImage = styled.img`
@@ -104,6 +108,7 @@ const ProductInfo = styled.div`
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
+  text-align: center;
 `;
 
 const ProductTitle = styled.h3`
@@ -114,4 +119,10 @@ const ProductTitle = styled.h3`
 const ProductDescription = styled.p`
   margin: 0;
   color: #666;
+`;
+
+const ProductPrice = styled.p`
+  margin: 0;
+  color: pink;
+  font-weight: bold;
 `;

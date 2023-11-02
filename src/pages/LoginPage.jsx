@@ -136,4 +136,5 @@ const LoginButtonStyle = styled.button`
   border-radius: 13px;
   border: 1px solid;
   font-family: monospace;
+  cursor: pointer;
 `;

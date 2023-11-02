@@ -70,7 +70,7 @@ export default function MainBar() {
           )}
         </ButtonsStyle>
       </Container>
-      <LogoStyle to="/">STICKY LEMON</LogoStyle>
+      <LogoStyle to="/">sticky lemon</LogoStyle>
       <NavStyle>
         <OrderedList>
           <li>
@@ -125,7 +125,10 @@ const CartStyle = styled(Link)`
   text-decoration: none;
   margin-left: 30px;
   margin-right: 10px;
-  color: white;
+  color: #82693d;
+  &:hover {
+    color: #9a8673;
+  }
 `;
 
 const LogoStyle = styled(Link)`
@@ -135,8 +138,10 @@ const LogoStyle = styled(Link)`
   align-items: center;
 
   color: black;
-  font-size: 40px;
+  margin: 20px;
+  font-size: 30px;
   text-decoration: none;
+  font-family: monospace;
 `;
 
 const NavStyle = styled.nav`
@@ -156,6 +161,7 @@ const StyledLink = styled(Link)`
 
   &:hover {
     color: #e4c6b0;
+    transition: all 200ms ease-in-out;
   }
 `;
 
