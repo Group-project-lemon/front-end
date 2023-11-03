@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 import { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, Link } from 'react-router-dom';
 import { apiClient } from '../utils/apiClient';
 import '../styles/main.css';
 import QuantityPicker from './QuantityPicker';
@@ -45,6 +45,63 @@ function ItemContent() {
             <QuantityPicker itemValue={item.id} />
           </Info>
         </ProductDetail>
+        <div className="body">
+          {/* useState이용해서 add눌리면 open 하는걸로 
+          함수 만들자 */}
+          <div className="sideCart open">
+            <div className="cart_content">
+              <div className="cart_header">
+                <img
+                  src="/cart-icon.png"
+                  alt="Cart Icon"
+                  style={{ width: 30 }}
+                />
+                <div className="header_title">
+                  <h2>Cart</h2>
+                  <span id="items_num">4</span>
+                </div>
+                <span id="close_btn" className="close_btn">
+                  &times;
+                </span>
+              </div>
+              {/* Cart Items */}
+              <div className="cart_items">
+                {/* Item 1 */}
+                <div className="cart_item">
+                  <div className="remove_item">
+                    <span>&times;</span>
+                  </div>
+                  <div className="item_img">
+                    <img
+                      src={`http://localhost:4000/images/${item.image}`}
+                      alt={item.name}
+                    />
+                  </div>
+                  <div className="item_details">
+                    <p>{item.name}</p>
+                    <strong>{item.price}</strong>
+                    <div className="qty">
+                      <span>-</span>
+                      <strong>1</strong>
+                      <span>+</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              {/* Cart Actions */}
+              <div className="cart_actions">
+                <div className="subtotal">
+                  <p>SUBTOTAL :</p>
+                  <p>
+                    $<span id="subtotal_price">3896</span>
+                  </p>
+                </div>
+                <Link to="/cart">View Cart</Link>
+                <button>Checkout</button>
+              </div>
+            </div>
+          </div>
+        </div>
       </Container>
     </>
   );

@@ -70,6 +70,9 @@ export default function MainBar() {
           )}
         </ButtonsStyle>
       </Container>
+      <ImgContainer>
+        <ImgStyle src="/lemon-icon.png" alt="Lemon Icon" />
+      </ImgContainer>
       <LogoStyle to="/">sticky lemon</LogoStyle>
       <NavStyle>
         <OrderedList>
@@ -103,6 +106,15 @@ const Container = styled.div`
   display: flex;
   align-items: center;
   padding: 0 15px;
+`;
+const ImgContainer = styled.div`
+  display: flex;
+  justify-content: center;
+  align-itmes: center;
+  margin-top: 20px;
+`;
+const ImgStyle = styled.img`
+  width: 28px;
 `;
 
 const ButtonsStyle = styled.div`
@@ -138,7 +150,7 @@ const LogoStyle = styled(Link)`
   align-items: center;
 
   color: black;
-  margin: 20px;
+  margin: 13px;
   font-size: 30px;
   text-decoration: none;
   font-family: monospace;

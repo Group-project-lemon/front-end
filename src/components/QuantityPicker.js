@@ -50,7 +50,10 @@ const QuantityPicker = (item) => {
           onChange={handleQuantityChange}
         />
       </QuantityInputContainer>
-      <SubmitButton onClick={addCart}>ADD</SubmitButton>
+      <SubmitButton onClick={addCart}>
+        <CartIconStyle src="/cart-icon.png" alt="" />
+        ADD
+      </SubmitButton>
       <Link to="/cart">cart</Link>
     </div>
   );
@@ -90,4 +93,8 @@ const SubmitButton = styled.button`
   &:hover {
     background-color: #d62828;
   }
+`;
+
+const CartIconStyle = styled.img`
+  width: 20px;
 `;
