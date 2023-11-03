@@ -1,45 +1,77 @@
-// import { css } from "@emotion/css"; 나중에 이거 노션보고 스타일드 css 바꾸기
+import styled from 'styled-components';
 
 export default function Footer() {
   return (
-    <>
-      <div>
-        services
-        <ul>
-          <button>customer service</button>
-        </ul>
-      </div>
-      <div>
-        S T I C K Y L E M O N
-        <ul>
-          <button>ABOUT</button>
-        </ul>
-      </div>
-      <div>
-        N E W S L E T T E R
-        <ul>
-          <input />
-          <button>GO!</button>
-        </ul>
-      </div>
-    </>
+    <FooterContainer>
+      <Section>
+        <SectionTitle>S E R V I C E S</SectionTitle>
+        <StyledButton>customer service</StyledButton>
+      </Section>
+      <Section>
+        <SectionTitle>S T I C K Y L E M O N</SectionTitle>
+        <StyledButton>ABOUT</StyledButton>
+      </Section>
+      <Section>
+        <SectionTitle>N E W S L E T T E R</SectionTitle>
+        <NewsletterContainer>
+          <NewsletterInput placeholder="Enter your email" />
+          <StyledButton>GO!</StyledButton>
+        </NewsletterContainer>
+      </Section>
+    </FooterContainer>
   );
 }
 
-// const Button = styled`
-//   --accent-color: white;
+const FooterContainer = styled.div`
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  padding: 80px 20px;
+  background-color: #84693e;
+  color: white;
+`;
 
-//   /* This renders the buttons above... Edit me! */
-//   background: transparent;
-//   border-radius: 3px;
-//   border: 1px solid var(--accent-color);
-//   color: var(--accent-color);
-//   display: inline-block;
-//   margin: 0.5rem 1rem;
-//   padding: 0.5rem 0;
-//   transition: all 200ms ease-in-out;
-//   width: 11rem;
+const Section = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+`;
 
-//   &:hover {
-//     filter: brightness(0.85);
-//   }
+const SectionTitle = styled.h3`
+  font-weight: bold;
+  margin-bottom: 5px;
+  font-size: 14px;
+`;
+
+const StyledButton = styled.button`
+  --accent-color: white;
+
+  background: transparent;
+  border-radius: 3px;
+  border: 1px solid var(--accent-color);
+  color: var(--accent-color);
+  display: inline-block;
+  margin: 0.25rem 0;
+  padding: 0.25rem 0.5rem;
+  transition: all 200ms ease-in-out;
+  cursor: pointer;
+  font-size: 12px;
+
+  &:hover {
+    filter: brightness(0.85);
+  }
+`;
+
+const NewsletterContainer = styled.div`
+  display: flex;
+  align-items: center;
+`;
+
+const NewsletterInput = styled.input`
+  padding: 0.25rem 0.5rem;
+  margin-right: 5px;
+  border-radius: 3px;
+  border: 1px solid var(--accent-color);
+  outline: none;
+  font-size: 12px;
+`;
