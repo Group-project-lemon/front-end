@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { Link, useNavigate } from 'react-router-dom';
 import { apiClient } from '../utils/apiClient';
-import { redirect } from '../../node_modules/react-router-dom/dist/index';
 
 const QuantityPicker = (item) => {
   const [formData, setFormData] = useState({

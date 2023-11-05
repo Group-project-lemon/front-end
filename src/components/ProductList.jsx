@@ -38,7 +38,7 @@ export default function ProductList() {
                 <ProductTitle>{item.name}</ProductTitle>
                 <ProductDescription>{item.description}</ProductDescription>
                 <ProductDescription>{item.color}</ProductDescription>
-                <ProductPrice>{item.price}&nbsp;won</ProductPrice>
+                <ProductPrice>₩{item.price}</ProductPrice>
               </ProductInfo>
             </StyleLink>
           </ItemCard>
