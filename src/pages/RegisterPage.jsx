@@ -54,7 +54,7 @@ export default function LoginForm() {
     });
 
     if (response.status === 200) {
-      alert('회원 등록이 되었습니다.');
+      alert('Register successfully!');
       navigate('/');
     } else {
       // Handle other statuses or errors

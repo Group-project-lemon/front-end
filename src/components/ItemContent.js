@@ -40,9 +40,9 @@ function ItemContent() {
             <Name>{item.name}</Name>
             <Description>{item.description}</Description>
             <Color>Color: {item.color}</Color>
-            <Price>${item.price}</Price>
+            <Price>₩{item.price}</Price>
 
-            <QuantityPicker itemValue={item} />
+            <QuantityPicker itemValue={item.id} />
           </Info>
         </ProductDetail>
       </Container>
@@ -105,8 +105,8 @@ const Color = styled.span`
 `;
 
 const Price = styled.span`
-  font-size: 32px;
-  font-weight: bold;
-  color: #e63946;
-  margin-bottom: 20px;
+  font-size: 20px;
+  // font-weight: bold;
+  color: #255aa8;
+  margin-bottom: 10px;
 `;

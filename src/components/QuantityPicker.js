@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { Link, useNavigate } from 'react-router-dom';
 import { apiClient } from '../utils/apiClient';
+import { redirect } from '../../node_modules/react-router-dom/dist/index';
 
 const QuantityPicker = (item) => {
   const [formData, setFormData] = useState({
@@ -46,7 +47,6 @@ const QuantityPicker = (item) => {
   };
 
   const addCart = async () => {
-    setIsCartOpen(!isCartOpen);
     try {
       const response = await fetch('http://localhost:4000/carts', {
         method: 'POST',
@@ -58,8 +58,11 @@ const QuantityPicker = (item) => {
       });
 
       if (response.status === 200) {
+        setIsCartOpen(!isCartOpen);
       } else {
-        alert('카트에 담지 못했습니다.');
+        alert(
+          '로그인을 하지 않아 카트에 담지 못했습니다. 로그인 후 이용바랍니다.',
+        );
       }
     } catch (error) {
       alert('카트에 담지 못했습니다.');
@@ -82,17 +85,21 @@ const QuantityPicker = (item) => {
         <CartIconStyle src="/cart-icon.png" alt="" />
         ADD
       </SubmitButton>
-      <Link to="/cart">cart</Link>
+      {/* <CartBtnStyle to="/cart">CART</CartBtnStyle> */}
       <div className="body">
         <div className={`sideCart ${isCartOpen ? 'open' : ''}`}>
           <div className="cart_content">
             <div className="cart_header">
               <img src="/cart-icon.png" alt="Cart Icon" style={{ width: 30 }} />
               <div className="header_title">
-                <h2>Cart</h2>
+                <h2>CART</h2>
                 <span id="items_num">4</span>
               </div>
-              <span id="close_btn" className="close_btn" onClick={addCart}>
+              <span
+                id="close_btn"
+                className="close_btn"
+                onClick={() => setIsCartOpen(false)}
+              >
                 &times;
               </span>
             </div>
@@ -165,9 +172,9 @@ const QuantityInput = styled.input`
 `;
 
 const SubmitButton = styled.button`
-  background-color: #e63946;
+  background-color: #d2973c;
   color: white;
-  padding: 10px 20px;
+  padding: 10px 36px;
   font-size: 16px;
   border: none;
   border-radius: 5px;
@@ -176,10 +183,28 @@ const SubmitButton = styled.button`
   margin-top: 1rem;
 
   &:hover {
-    background-color: #d62828;
+    opacity: 0.9;
   }
 `;
 
 const CartIconStyle = styled.img`
   width: 20px;
+  margin-right: 10px;
 `;
+
+// const CartBtnStyle = styled(Link)`
+//   margin-left: 10px;
+//   text-decoration: none;
+//   background-color: #d2973c;
+//   color: white;
+//   padding: 10px 30px;
+//   font-size: 18px;
+//   border: none;
+//   border-radius: 5px;
+//   transition: background-color 0.3s ease;
+//   margin-top: 1rem;
+
+//   &:hover {
+//     opacity: 0.9;
+//   }
+// `;

@@ -33,7 +33,7 @@ export default function LoginForm() {
       });
 
       if (response.status === 200) {
-        alert('로그인이 되었습니다.');
+        alert('Login successfully');
         navigate('/');
       } else {
         // Handle other statuses or errors
