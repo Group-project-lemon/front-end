@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 import { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, Link } from 'react-router-dom';
 import { apiClient } from '../utils/apiClient';
 import '../styles/main.css';
 import QuantityPicker from './QuantityPicker';
@@ -40,7 +40,7 @@ function ItemContent() {
             <Name>{item.name}</Name>
             <Description>{item.description}</Description>
             <Color>Color: {item.color}</Color>
-            <Price>${item.price}</Price>
+            <Price>₩{item.price}</Price>
 
             <QuantityPicker itemValue={item.id} />
           </Info>
@@ -105,8 +105,8 @@ const Color = styled.span`
 `;
 
 const Price = styled.span`
-  font-size: 32px;
-  font-weight: bold;
-  color: #e63946;
-  margin-bottom: 20px;
+  font-size: 20px;
+  // font-weight: bold;
+  color: #255aa8;
+  margin-bottom: 10px;
 `;

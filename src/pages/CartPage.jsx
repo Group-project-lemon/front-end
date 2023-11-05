@@ -8,6 +8,41 @@ import { useNavigate } from 'react-router-dom';
 const CartPage = () => {
   const navigate = useNavigate();
   const [itemInfo, setItemInfo] = useState([]);
+  const [subtotal, setSubtotal] = useState(0);
+  const [delivery, setDelivery] = useState(0);
+  const [total, setTotal] = useState(0);
+
+  useEffect(() => {
+    const pricetotal = subtotal + delivery;
+    setTotal(pricetotal);
+  }, [subtotal, delivery]);
+
+  useEffect(() => {
+    let calculatedTotalSubtotal = 0;
+
+    itemInfo.forEach((item) => {
+      const subtotalForItem = item.price * item.quantity;
+      calculatedTotalSubtotal += subtotalForItem;
+    });
+
+    setSubtotal(calculatedTotalSubtotal);
+  }, [itemInfo]);
+
+  useEffect(() => {
+    let calculatedTotalSubtotal = 0;
+
+    // Calculate total subtotal for all items
+    itemInfo.forEach((item) => {
+      calculatedTotalSubtotal += item.price * item.quantity;
+    });
+
+    // Set delivery fee based on the total subtotal
+    if (calculatedTotalSubtotal > 50000) {
+      setDelivery(0); // Free delivery if total is over 50000
+    } else {
+      setDelivery(5000); // Charge 5000 for delivery
+    }
+  }, [itemInfo]);
 
   useEffect(() => {
     const url = `/carts`;
@@ -35,47 +70,75 @@ const CartPage = () => {
   return (
     <>
       <MainBar />
-      <Container>
-        {itemInfo.map((item) => (
-          <CartItem key={item.id} onClick={() => moveItemPage(item.id)}>
-            <ItemImg
-              src={`http://localhost:4000/images/${item.image}`}
-              alt={item.name}
-            />
-            <ItemInfo>
-              <ItemName>{item.name}</ItemName>
-              <ItemDescription>{item.description}</ItemDescription>
-              <ItemDetails>Color: {item.color}</ItemDetails>
-              <ItemPrice>${item.price}</ItemPrice>
-              <Quantity>Quantity: {item.quantity}</Quantity>
-            </ItemInfo>
-          </CartItem>
-        ))}
-        <OrderButtonWrapper>
-          <SubmitButton onClick={order}>ORDER</SubmitButton>
-        </OrderButtonWrapper>
-      </Container>
+      <ContentContainer>
+        <Container>
+          <FontStyle>
+            My Cart
+            <hr />
+          </FontStyle>
+          {itemInfo.map((item) => {
+            return (
+              <CartItem key={item.id}>
+                <ItemImg
+                  src={`http://localhost:4000/images/${item.image}`}
+                  alt={item.name}
+                  onClick={() => moveItemPage(item.id)}
+                />
+                <ItemInfo>
+                  <ItemName>{item.name}</ItemName>
+                  <ItemDescription>{item.description}</ItemDescription>
+                  <ItemDetails>Color: {item.color}</ItemDetails>
+                  <ItemPrice>₩{item.price}</ItemPrice>
+                  <Quantity>Quantity: {item.quantity}</Quantity>
+                </ItemInfo>
+                <RemoveItemBtn>&times;</RemoveItemBtn>
+              </CartItem>
+            );
+          })}
+          <OrderButtonWrapper></OrderButtonWrapper>
+        </Container>
+        <SummaryContainer>
+          <FontStyle>
+            Order summary <hr />
+          </FontStyle>
+          <SubtotalStyle>
+            <TextStyle>subtotal ₩{subtotal}</TextStyle>
+            <TextStyle>delivery ₩{delivery}</TextStyle>
+          </SubtotalStyle>
+          <hr />
+          {/* <button onClick={totalPrice}>check how much</button> */}
+          <TotalStyle>Total ₩{total}</TotalStyle>
+          <SubmitButton onClick={order}>CHECKOUT</SubmitButton>
+        </SummaryContainer>
+      </ContentContainer>
       <Footer />
     </>
   );
 };
 
+const ContentContainer = styled.div`
+  display: flex;
+`;
+
 const Container = styled.div`
-  padding: 40px;
-  max-width: 1200px;
-  margin: 0 auto;
+  padding: 20px;
+  width: 630px;
+  margin-left: 100px;
+`;
+
+const FontStyle = styled.div`
+  font-size: 25px;
+`;
+
+const SummaryContainer = styled.div`
+  padding: 20px;
+  width: 250px;
 `;
 
 const CartItem = styled.div`
   display: flex;
   border-bottom: 1px solid #e1e1e1;
-  padding: 20px 0;
-
-  &:hover {
-    background-color: #f5f5f5; /* Background color for hover effect */
-    transform: translateY(-5px); /* Lifts the card up a little */
-    box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.1); /* Gives the card a subtle shadow */
-  }
+  padding: 20px 0px;
 `;
 
 const ItemImg = styled.img`
@@ -83,13 +146,13 @@ const ItemImg = styled.img`
   height: 150px;
   margin-right: 20px;
   object-fit: cover;
+  cursor: pointer;
 `;
 
 const ItemInfo = styled.div`
   display: flex;
   flex-direction: column;
   flex: 1;
-  cursor: pointer;
 `;
 
 const ItemName = styled.h2`
@@ -125,7 +188,8 @@ const OrderButtonWrapper = styled.div`
 `;
 
 const SubmitButton = styled.button`
-  background-color: #007bff;
+  background-color: #d2973c;
+  width: 250px;
   color: white;
   border: none;
   padding: 12px 24px;
@@ -135,8 +199,32 @@ const SubmitButton = styled.button`
   transition: 0.3s;
 
   &:hover {
-    background-color: #0056b3;
+    opacity: 0.8;
   }
+`;
+
+const SubtotalStyle = styled.div`
+  margin: 0 auto;
+`;
+
+const TextStyle = styled.div`
+  margin: 30px 0;
+`;
+
+const TotalStyle = styled.div`
+  font-size: 23px;
+  margin: 30px 0;
+`;
+
+const RemoveItemBtn = styled.button`
+  cursor: pointer;
+  border: none;
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  font-size: 30px;
+  margin-right: 40px;
+  background-color: white;
 `;
 
 export default CartPage;

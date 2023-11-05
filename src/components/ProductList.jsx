@@ -27,7 +27,7 @@ export default function ProductList() {
       <ProductsList>
         {items.map((item) => (
           <ItemCard key={item.id}>
-            <Link to={`/items/${item.id}`}>
+            <StyleLink to={`/items/${item.id}`}>
               {item && item.image && (
                 <ProductImage
                   src={`http://localhost:4000/images/${item.image}`}
@@ -38,9 +38,9 @@ export default function ProductList() {
                 <ProductTitle>{item.name}</ProductTitle>
                 <ProductDescription>{item.description}</ProductDescription>
                 <ProductDescription>{item.color}</ProductDescription>
-                <ProductDescription>{item.price}</ProductDescription>
+                <ProductPrice>₩{item.price}</ProductPrice>
               </ProductInfo>
-            </Link>
+            </StyleLink>
           </ItemCard>
         ))}
       </ProductsList>
@@ -62,8 +62,8 @@ const ProductsList = styled.div`
 `;
 
 const ItemCard = styled.div`
-  background-color: #f7f7f7;
-  border: 1px solid #eaeaea;
+  background-color: #f1f5f1;
+  border: 1px;
   border-radius: 5px;
   padding: 1rem;
   width: 220px;
@@ -73,6 +73,10 @@ const ItemCard = styled.div`
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     transform: scale(1.03);
   }
+`;
+
+const StyleLink = styled(Link)`
+  text-decoration: none;
 `;
 
 const ProductImage = styled.img`
@@ -85,6 +89,7 @@ const ProductInfo = styled.div`
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
+  text-align: center;
 `;
 
 const ProductTitle = styled.h3`
@@ -95,4 +100,10 @@ const ProductTitle = styled.h3`
 const ProductDescription = styled.p`
   margin: 0;
   color: #666;
+`;
+
+const ProductPrice = styled.p`
+  margin: 0;
+  color: pink;
+  font-weight: bold;
 `;

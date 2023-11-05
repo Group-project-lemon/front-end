@@ -70,7 +70,10 @@ export default function MainBar() {
           )}
         </ButtonsStyle>
       </Container>
-      <LogoStyle to="/">STICKY LEMON</LogoStyle>
+      <ImgContainer>
+        <ImgStyle src="/lemon-icon.png" alt="Lemon Icon" />
+      </ImgContainer>
+      <LogoStyle to="/">sticky lemon</LogoStyle>
       <NavStyle>
         <OrderedList>
           <li>
@@ -104,6 +107,15 @@ const Container = styled.div`
   align-items: center;
   padding: 0 15px;
 `;
+const ImgContainer = styled.div`
+  display: flex;
+  justify-content: center;
+  align-itmes: center;
+  margin-top: 20px;
+`;
+const ImgStyle = styled.img`
+  width: 28px;
+`;
 
 const ButtonsStyle = styled.div`
   flex-grow: 1; // 이를 추가하여 가능한 많은 공간을 차지하게 합니다.
@@ -125,7 +137,10 @@ const CartStyle = styled(Link)`
   text-decoration: none;
   margin-left: 30px;
   margin-right: 10px;
-  color: white;
+  color: #82693d;
+  &:hover {
+    color: #9a8673;
+  }
 `;
 
 const LogoStyle = styled(Link)`
@@ -135,8 +150,10 @@ const LogoStyle = styled(Link)`
   align-items: center;
 
   color: black;
-  font-size: 40px;
+  margin: 13px;
+  font-size: 30px;
   text-decoration: none;
+  font-family: monospace;
 `;
 
 const NavStyle = styled.nav`
@@ -156,6 +173,7 @@ const StyledLink = styled(Link)`
 
   &:hover {
     color: #e4c6b0;
+    transition: all 200ms ease-in-out;
   }
 `;
 

@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React, { useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
@@ -8,12 +8,20 @@ export default function LoginForm() {
   const navigate = useNavigate();
   const emailRef = useRef();
   const passwordRef = useRef();
+  const [error, setError] = useState(false);
 
   const submitForm = async (e) => {
     e.preventDefault();
 
     const email = emailRef.current.value;
     const password = passwordRef.current.value;
+
+    if (!email || !password) {
+      setError(true);
+      return;
+    } else {
+      setError(false);
+    }
     try {
       const response = await fetch('http://localhost:4000/loginProc', {
         method: 'POST',
@@ -25,7 +33,7 @@ export default function LoginForm() {
       });
 
       if (response.status === 200) {
-        alert('로그인이 되었습니다.');
+        alert('Login successfully');
         navigate('/');
       } else {
         // Handle other statuses or errors
@@ -70,12 +78,16 @@ export default function LoginForm() {
               placeholder="Enter password"
             />
           </FieldsetStyle>
+          <div>
+            {error && <ErrorStyle>Please fill out all fields!</ErrorStyle>}
+          </div>
           <LoginButtonStyle type="submit" onClick={submitForm}>
             Login
           </LoginButtonStyle>
-          <div>
-            <Link to="/register">Create new account</Link>
-          </div>
+          <hr />
+          <SignUpContainer>
+            <SignUpStyle to="/register">Create new account</SignUpStyle>
+          </SignUpContainer>
         </form>
       </ContainerStyle>
       <Footer />
@@ -99,10 +111,12 @@ const MainStyle = styled(Link)`
 const ContainerStyle = styled.div`
   max-width: 370px;
   margin: 0 auto;
+  height: 400px;
+  padding: 20px;
   display: block;
   background-color: #f1f5f1;
   border-radius: 10px;
-  margin-bottom: 75px;
+  margin-bottom: 70px;
   font-family: monospace;
 `;
 
@@ -127,6 +141,11 @@ const InputStyle = styled.input`
   border: 1px solid;
   font-family: monospace;
   text-align: center;
+
+  &::placeholder {
+    color: lightgray;
+    font-size: 17px;
+  }
 `;
 
 const LoginButtonStyle = styled.button`
@@ -136,4 +155,35 @@ const LoginButtonStyle = styled.button`
   border-radius: 13px;
   border: 1px solid;
   font-family: monospace;
+  cursor: pointer;
+  &:hover {
+    color: pink;
+    transition: all 100ms ease-in-out;
+  }
+`;
+
+const SignUpContainer = styled.div`
+  margin-bottom: 30px;
+`;
+
+const SignUpStyle = styled(Link)`
+  display: flex;
+  justify-content: center;
+  color: black;
+  width: 320px;
+  font-size: 25px;
+  margin: 20px;
+  text-decoration: none;
+  border-radius: 13px;
+  border: 1px solid;
+  font-family: monospace;
+  &:hover {
+    color: pink;
+    transition: all 100ms ease-in-out;
+  }
+`;
+
+const ErrorStyle = styled.p`
+  color: red;
+  text-align: center;
 `;

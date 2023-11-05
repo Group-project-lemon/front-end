@@ -4,15 +4,15 @@ export default function Footer() {
   return (
     <FooterContainer>
       <Section>
-        <SectionTitle>S E R V I C E S</SectionTitle>
+        <SectionTitle>SERVICES</SectionTitle>
         <StyledButton>customer service</StyledButton>
       </Section>
       <Section>
-        <SectionTitle>S T I C K Y L E M O N</SectionTitle>
+        <SectionTitle>STICKY LEMON</SectionTitle>
         <StyledButton>ABOUT</StyledButton>
       </Section>
       <Section>
-        <SectionTitle>N E W S L E T T E R</SectionTitle>
+        <SectionTitle>NEWSLETTER</SectionTitle>
         <NewsletterContainer>
           <NewsletterInput placeholder="Enter your email" />
           <StyledButton>GO!</StyledButton>
@@ -41,6 +41,7 @@ const SectionTitle = styled.h3`
   font-weight: bold;
   margin-bottom: 5px;
   font-size: 14px;
+  letter-spacing: 5px;
 `;
 
 const StyledButton = styled.button`
@@ -71,7 +72,7 @@ const NewsletterInput = styled.input`
   padding: 0.25rem 0.5rem;
   margin-right: 5px;
   border-radius: 3px;
-  border: 1px solid var(--accent-color);
+  border: 1px solid;
   outline: none;
   font-size: 12px;
 `;
