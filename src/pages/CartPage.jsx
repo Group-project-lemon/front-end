@@ -37,7 +37,7 @@ const CartPage = () => {
     });
 
     // Set delivery fee based on the total subtotal
-    if (calculatedTotalSubtotal > 50000) {
+    if (calculatedTotalSubtotal > 50000 || calculatedTotalSubtotal === 0) {
       setDelivery(0); // Free delivery if total is over 50000
     } else {
       setDelivery(5000); // Charge 5000 for delivery
