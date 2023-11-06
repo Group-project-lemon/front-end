@@ -12,6 +12,7 @@ const QuantityPicker = (item) => {
   const navigate = useNavigate();
   const [itemInfo, setItemInfo] = useState([]);
   const [isCartOpen, setIsCartOpen] = useState(false);
+  const [subtotal, setSubtotal] = useState(0);
 
   const handleQuantityChange = (event) => {
     const enteredQuantity = parseInt(event.target.value, 10) || 1;
@@ -21,6 +22,17 @@ const QuantityPicker = (item) => {
       quantity: Math.max(1, enteredQuantity),
     });
   };
+
+  useEffect(() => {
+    let calculatedTotalSubtotal = 0;
+
+    itemInfo.forEach((item) => {
+      const subtotalForItem = item.price * item.quantity;
+      calculatedTotalSubtotal += subtotalForItem;
+    });
+
+    setSubtotal(calculatedTotalSubtotal);
+  }, [itemInfo]);
 
   useEffect(() => {
     const url = `/carts`;
@@ -57,7 +69,7 @@ const QuantityPicker = (item) => {
       });
 
       if (response.status === 200) {
-        setIsCartOpen(!isCartOpen);
+        setIsCartOpen(!isCartOpen); // Toggle the side cart
       } else {
         alert(
           '로그인을 하지 않아 카트에 담지 못했습니다. 로그인 후 이용바랍니다.',
@@ -92,7 +104,6 @@ const QuantityPicker = (item) => {
               <img src="/cart-icon.png" alt="Cart Icon" style={{ width: 30 }} />
               <div className="header_title">
                 <h2>CART</h2>
-                <span id="items_num">4</span>
               </div>
               <span
                 id="close_btn"
@@ -137,7 +148,7 @@ const QuantityPicker = (item) => {
               <div className="subtotal">
                 <p>SUBTOTAL :</p>
                 <p>
-                  <span id="subtotal_price">3896</span>
+                  <span id="subtotal_price">{subtotal}</span>
                 </p>
               </div>
               <Link to="/cart">View Cart</Link>
