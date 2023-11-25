@@ -17,7 +17,7 @@ function ItemContent() {
         const result = await apiClient({ url: `${itemUrl}` });
         setItem(result);
       } catch (error) {
-        console.error('데이터를 가져오는 중 오류가 발생했습니다.');
+        console.error('Error occur!');
       }
     };
 

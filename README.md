@@ -8,6 +8,8 @@
 
 감사합니다.
 
+Hello,
+
 We are creating a new website inspried by https://www.stickylemon.nl/ .
 
 The purpose of this team project is to use the latest languages and gain the new skills to be a full-stack developer/web developer. Since we were taking a courses from Bootcamp to be one of them. It's the first time to make our own website for all of us which we put our efforts and pour our skills from the courses.
@@ -15,3 +17,5 @@ The purpose of this team project is to use the latest languages and gain the new
 Trying to make the layout as same as the website using Grid/Flexbox. Collecting and storing the database along with users.
 Using OAuth for the user to login easy without giving us the passwords.
 Creating routes to pass a data or set the state in the Link component and make sure it from the react-router-dom library.
+
+![alt text](https://github.com/Group-project-lemon/front-end/issues/9)
