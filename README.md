@@ -15,3 +15,15 @@ The purpose of this team project is to use the latest languages and gain the new
 Trying to make the layout as same as the website using Grid/Flexbox. Collecting and storing the database along with users.
 Using OAuth for the user to login easy without giving us the passwords.
 Creating routes to pass a data or set the state in the Link component and make sure it from the react-router-dom library.
+
+Here are some screenshots of the website.
+
+![sticky lemon](https://github.com/Group-project-lemon/front-end/assets/98049622/70f38b80-8656-4a1d-bd84-7137f3da980f)
+
+![sticky lemon 2](https://github.com/Group-project-lemon/front-end/assets/98049622/a62af86f-1264-4be6-8af3-f3b574a9d27e)
+
+![sticky lemon 3](https://github.com/Group-project-lemon/front-end/assets/98049622/900f83ae-3cfc-466a-ba4c-b53fc2001cad)
+
+![sticky lemon 4](https://github.com/Group-project-lemon/front-end/assets/98049622/3637c472-d53a-41b4-b09c-75716eefcd8a)
+
+
